@@ -1,6 +1,9 @@
 import Highcharts from "highcharts";
+import MapModule from "highcharts/modules/map";
+import map from "@highcharts/map-collection/countries/ca/ca-all.geo.json";
 import data from "./data_management/runs.json";
 
+MapModule(Highcharts);
 
 function syncExtremes(e) {
   const thisChart = this.chart;
@@ -29,8 +32,6 @@ const cerPalette = {
   Aubergine: "#871455",
   "Dim Grey": "#8c8c96",
   "Cool Grey": "#42464B",
-  hcBlue: "#7cb5ec",
-  hcGreen: "#90ed7d",
   hcPink: "#f15c80",
   hcRed: "#f45b5b",
   hcAqua: "#2b908f",
@@ -119,16 +120,25 @@ function testChart(series, maxY) {
       text: "",
     },
 
+    credits: {
+      text: "",
+    },
+
     xAxis: {
       type: "datetime",
       crosshair: true,
-        events: {
-          setExtremes: syncExtremes,
-        },
+      events: {
+        setExtremes: syncExtremes,
+      },
     },
 
     yAxis: {
       max: maxY,
+      title: {
+        text: "thousand b/d",
+      },
+      startOnTick: false,
+      endOnTick: false,
     },
 
     tooltip: {
@@ -139,7 +149,33 @@ function testChart(series, maxY) {
   });
 }
 
+function createMap(div = "canada-map") {
+  return new Highcharts.mapChart(div, {
+    chart: {
+      type: "map",
+      height: 320,
+      margin: [0, 0, 0, 0],
+      map,
+    },
+    title: {
+      text: "",
+    },
+    credits: {
+      text: "",
+    },
+    series: [
+      {
+        name: "Basemap",
+        borderColor: "#606060",
+        nullColor: "rgba(200, 200, 200, 0.2)",
+        showInLegend: false,
+      },
+    ],
+  });
+}
+
 function mainCrudeRuns() {
+  const mapRegions = createMap();
   const series = seriesify(data);
   console.log(series);
   testChart(series.west, series.maxValue);

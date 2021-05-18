@@ -6,5 +6,11 @@
   margin-bottom: 0px;
 }
 .runs-chart {
-  height: 250px;
+  height: 200px;
 }
+.runs-panel {
+  height: 400px !important;
+}
+/* .canada-map {
+  height: 400px !important;
+} */

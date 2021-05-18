@@ -25,13 +25,71 @@
           <h1 id="wb-cont" property="name">
             Weekly Crude Run Summary and Data
           </h1>
-          <div id="sync-charts">
-            <div class="runs-chart" id="runs-west"></div>
-            <div class="runs-chart" id="runs-ontario"></div>
-            <div class="runs-chart" id="runs-east"></div>
-          </div>
+        </div>
+      </div>
+      <div class="row wb-eqht wb-init mrgn-tp-lg" id="runs-intro">
+        <div class="col-md-6">
+          <section class="panel panel-default hght-inhrt runs-panel">
+            <header class="panel-heading">
+              <h5 class="panel-title">Crude Region Map</h5>
+            </header>
+            <div class="panel-body">
+              <div id="canada-map"></div>
+            </div>
+          </section>
+        </div>
+        <div class="col-md-6">
+          <section class="panel panel-default hght-inhrt runs-panel">
+            <header class="panel-heading">
+              <h5 class="panel-title">What are Crude Runs?</h5>
+            </header>
+            <div class="panel-body">
+              <p>
+                Crude runs represent the volume of crude oil consumed by
+                refineries. The crude oil is then processed into various refined
+                products such as gasoline, diesel, and jet fuel. Manitoba, Nova
+                Scotia, PEI, and the Territories do not have crude oil
+                refineries.
+              </p>
+              <p>
+                Data is provided to the CER voluntarity by the refinery
+                operators, and aggregated into three regions for confidentiality
+                reasons.
+              </p>
+              <p>
+                Refining capacity is an estimate, and fluctuates over time based
+                on several factors such as the type of crude entering the
+                refinery, and the desired refined product mix produced.
+              </p>
+            </div>
+          </section>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <section class="panel panel-default">
+            <header class="panel-heading">
+              <h5 class="panel-title">Crude Run Charts</h5>
+            </header>
+            <div class="panel-body">
+              <div id="sync-charts">
+                <div class="runs-chart" id="runs-west"></div>
+                <div class="runs-chart" id="runs-ontario"></div>
+                <div class="runs-chart" id="runs-east"></div>
+              </div>
+            </div>
+          </section>
+        </div>
+        <div class="col-md-12">
+          <section class="panel panel-default">
+            <header class="panel-heading">
+              <h5 class="panel-title">Dashboard Instructions</h5>
+            </header>
+            <div class="panel-body">...</div>
+          </section>
         </div>
       </div>
     </div>
   </body>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.js"></script>
 </html>

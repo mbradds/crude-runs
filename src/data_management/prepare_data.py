@@ -49,7 +49,11 @@ def get_data():
                                "Quebec & Eastern Canada": "q",
                                "Western Canada": "w"})
     for val in ['v', 'w', 't', 'c']:
+        df[val] = [x*6.2898 for x in df[val]]
         df[val] = df[val].round(1)
+    # propbably dont need the 4week average and ytd average
+    del df["w"]
+    del df["t"]
     df = df.sort_values(by="d")
     df.to_json('runs.json', orient='records')
 
