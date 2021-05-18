@@ -11,7 +11,7 @@
     "build": "webpack",
     "start": "node server.js",
     "heroku-postbuild": "webpack",
-    "dev": "webpack serve --output-public-path=/dist/",
+    "dev": "webpack serve",
     "update-data": "",
     "maps": "sh ./src/data_management/npm_scripts/simplify-maps.sh",
     "test": "ava"

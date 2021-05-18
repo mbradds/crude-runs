@@ -1,0 +1,10 @@
+.cerlabel {
+  position: center;
+  font-family: Arial;
+  font-weight: bold;
+  color: #871455;
+  margin-bottom: 0px;
+}
+.runs-chart {
+  height: 250px;
+}
