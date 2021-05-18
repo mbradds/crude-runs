@@ -4,11 +4,7 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link
-      href="../GCWeb/assets/favicon.ico"
-      rel="icon"
-      type="image/x-icon"
-    />
+    <link href="../GCWeb/assets/favicon.ico" rel="icon" type="image/x-icon" />
     <link rel="preload" href="../css/main.css" as="style" />
     <link rel="stylesheet" href="../css/main.css" />
     <link rel="stylesheet" href="../GCWeb/css/theme.min.css" />
@@ -61,6 +57,12 @@
                 on several factors such as the type of crude entering the
                 refinery, and the desired refined product mix produced.
               </p>
+              <p>
+                This dashboard is updated monthly. Please take a look at the
+                data download options below for the most recent data, and
+                additional metrics such as four week average and year-to-date
+                average.
+              </p>
             </div>
           </section>
         </div>
@@ -69,7 +71,34 @@
         <div class="col-md-12">
           <section class="panel panel-default">
             <header class="panel-heading">
-              <h5 class="panel-title">Crude Run Charts</h5>
+              <div class="chart-header">
+                <h5 class="panel-title" style="display: inline">
+                  Crude Run Charts
+                </h5>
+                <div class="radio-inline pull-right" style="display: inline">
+                  <form>
+                    <label for="incident-count-btn" class="radio-inline">
+                      <input
+                        id="crude-runs-bbl-btn"
+                        type="radio"
+                        name="type"
+                        value="bbl"
+                        checked="checked"
+                      />
+                      thousand bbl/day</label
+                    >
+                    <label for="incident-volume-btn" class="radio-inline">
+                      <input
+                        id="crude-runs-m3"
+                        type="radio"
+                        name="type"
+                        value="m3"
+                      />
+                      thousand m3/day</label
+                    >
+                  </form>
+                </div>
+              </div>
             </header>
             <div class="panel-body">
               <div id="sync-charts">
@@ -85,7 +114,14 @@
             <header class="panel-heading">
               <h5 class="panel-title">Dashboard Instructions</h5>
             </header>
-            <div class="panel-body">...</div>
+            <div class="panel-body">
+              <p>
+                Click and drag your cursor on one of the charts to filter to a
+                desired date range for all charts. Click on the reset zoom
+                button in the top right of the chart to return to full date
+                zoom.
+              </p>
+            </div>
           </section>
         </div>
       </div>

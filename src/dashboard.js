@@ -2,8 +2,11 @@ import Highcharts from "highcharts";
 import MapModule from "highcharts/modules/map";
 import map from "@highcharts/map-collection/countries/ca/ca-all.geo.json";
 import data from "./data_management/runs.json";
+import { cerPalette } from "./util";
+import { generalTheme } from "./themes";
 
 MapModule(Highcharts);
+generalTheme(Highcharts);
 
 function syncExtremes(e) {
   const thisChart = this.chart;
@@ -22,22 +25,6 @@ function syncExtremes(e) {
     });
   }
 }
-
-const cerPalette = {
-  "Night Sky": "#054169",
-  Sun: "#FFBE4B",
-  Ocean: "#5FBEE6",
-  Forest: "#559B37",
-  Flame: "#FF821E",
-  Aubergine: "#871455",
-  "Dim Grey": "#8c8c96",
-  "Cool Grey": "#42464B",
-  hcPink: "#f15c80",
-  hcRed: "#f45b5b",
-  hcAqua: "#2b908f",
-  hcPurple: "#8085e9",
-  hcLightBlue: "#91e8e1",
-};
 
 function seriesify(runData) {
   const addToSeries = (series, row) => {
@@ -132,8 +119,14 @@ function testChart(series, maxY) {
       },
     },
 
+    plotOptions: {
+      line: {
+        lineWidth: 3,
+      },
+    },
+
     yAxis: {
-      max: maxY,
+      max: maxY + 15,
       title: {
         text: "thousand b/d",
       },
@@ -167,10 +160,29 @@ function createMap(div = "canada-map") {
       map: {
         allAreas: false,
       },
+      series: {
+        events: {
+          legendItemClick: function noClick() {
+            return false;
+          },
+        },
+      },
     },
     legend: {
       floating: false,
       y: 15,
+    },
+    tooltip: {
+      useHTML: true,
+      formatter: function mapTooltip() {
+        if (this.point.value > 0) {
+          const header = `<strong>${this.series.name}</strong><br>`;
+          const postWord = this.point.value > 1 ? "refineries" : "refinery";
+          const body = `${this.key} - ${this.point.value} ${postWord}`;
+          return header + body;
+        }
+        return false;
+      },
     },
     series: [
       {
@@ -182,22 +194,21 @@ function createMap(div = "canada-map") {
       {
         name: "Western Canada",
         data: [
-          ["ca-ab", 1],
-          ["ca-bc", 1],
-          ["ca-sk", 1],
-          ["ca-mb", 1],
+          ["ca-ab", 5],
+          ["ca-bc", 2],
+          ["ca-sk", 2],
         ],
         color: cerPalette["Night Sky"],
       },
       {
         name: "Ontario",
-        data: [["ca-on", 1]],
+        data: [["ca-on", 4]],
         color: cerPalette.Ocean,
       },
       {
         name: "Quebec & Eastern Canada",
         data: [
-          ["ca-qc", 1],
+          ["ca-qc", 2],
           ["ca-nb", 1],
           ["ca-nl", 1],
         ],
@@ -209,11 +220,12 @@ function createMap(div = "canada-map") {
         nullColor: "rgba(200, 200, 200, 0.2)",
         color: "rgba(200, 200, 200, 0.2)",
         data: [
-          ["ca-nu", 1],
-          ["ca-ns", 1],
-          ["ca-nt", 1],
-          ["ca-pe", 1],
-          ["ca-yt", 1],
+          ["ca-nu", 0],
+          ["ca-ns", 0],
+          ["ca-nt", 0],
+          ["ca-pe", 0],
+          ["ca-yt", 0],
+          ["ca-mb", 0],
         ],
         showInLegend: false,
       },
