@@ -153,21 +153,68 @@ function createMap(div = "canada-map") {
   return new Highcharts.mapChart(div, {
     chart: {
       type: "map",
-      height: 320,
-      margin: [0, 0, 0, 0],
+      height: 330,
+      margin: [0, 0, 20, 0],
       map,
     },
     title: {
       text: "",
     },
     credits: {
-      text: "",
+      enabled: false,
+    },
+    plotOptions: {
+      map: {
+        allAreas: false,
+      },
+    },
+    legend: {
+      floating: false,
+      y: 15,
     },
     series: [
       {
         name: "Basemap",
         borderColor: "#606060",
         nullColor: "rgba(200, 200, 200, 0.2)",
+        showInLegend: false,
+      },
+      {
+        name: "Western Canada",
+        data: [
+          ["ca-ab", 1],
+          ["ca-bc", 1],
+          ["ca-sk", 1],
+          ["ca-mb", 1],
+        ],
+        color: cerPalette["Night Sky"],
+      },
+      {
+        name: "Ontario",
+        data: [["ca-on", 1]],
+        color: cerPalette.Ocean,
+      },
+      {
+        name: "Quebec & Eastern Canada",
+        data: [
+          ["ca-qc", 1],
+          ["ca-nb", 1],
+          ["ca-nl", 1],
+        ],
+        color: cerPalette.Flame,
+      },
+      {
+        name: "no-refinery",
+        borderColor: "#606060",
+        nullColor: "rgba(200, 200, 200, 0.2)",
+        color: "rgba(200, 200, 200, 0.2)",
+        data: [
+          ["ca-nu", 1],
+          ["ca-ns", 1],
+          ["ca-nt", 1],
+          ["ca-pe", 1],
+          ["ca-yt", 1],
+        ],
         showInLegend: false,
       },
     ],
@@ -177,7 +224,7 @@ function createMap(div = "canada-map") {
 function mainCrudeRuns() {
   const mapRegions = createMap();
   const series = seriesify(data);
-  console.log(series);
+  console.log(mapRegions);
   testChart(series.west, series.maxValue);
   testChart(series.east, series.maxValue);
   testChart(series.quebec, series.maxValue);
