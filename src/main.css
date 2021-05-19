@@ -8,6 +8,10 @@
 .runs-panel {
   height: 400px !important;
 }
+.text-highlight {
+  font-style: normal;
+  font-weight: bold;
+}
 /* small screen */
 @media only screen and (max-height: 900px), screen and (max-width: 1440px) {
   .runs-chart {
