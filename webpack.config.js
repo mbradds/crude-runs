@@ -2,6 +2,8 @@ const path = require("path");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+// const BundleAnalyzerPlugin = require("webpack-bundle-analyzer")
+//   .BundleAnalyzerPlugin;
 // const webpack = require("webpack");
 
 module.exports = {
@@ -17,7 +19,7 @@ module.exports = {
     compress: true,
     contentBase: "./dist",
     publicPath: "/",
-    hot: true
+    hot: true,
   },
 
   devtool: false,
@@ -75,10 +77,6 @@ module.exports = {
         use: {
           loader: "babel-loader",
         },
-      },
-      {
-        test: /\.css$/,
-        use: [{ loader: "style-loader" }, { loader: "css-loader" }],
       },
     ],
   },

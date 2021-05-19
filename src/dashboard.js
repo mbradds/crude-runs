@@ -333,12 +333,6 @@ function mainCrudeRuns() {
       const radioValue = event.target.value;
       unitsHolder.current = radioValue;
       unitsHolder.label = unitsLabel(unitsHolder);
-      // let yTitle = "";
-      // if (unitsHolder.current === "b/d") {
-      //   yTitle = "thousand b/d";
-      // } else if (unitsHolder.current === "m3/d") {
-      //   yTitle = "thousand m3/d";
-      // }
       series = seriesify(data, unitsHolder);
       updateRegionChart(westChart, series, "west", unitsHolder);
       updateRegionChart(eastChart, series, "east", unitsHolder);
