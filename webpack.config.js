@@ -2,11 +2,11 @@ const path = require("path");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
-const webpack = require("webpack");
+// const webpack = require("webpack");
 
 module.exports = {
-  mode: "development",
-  // mode: "production",
+  // mode: "development",
+  mode: "production",
   entry: "./src/dashboard.js",
   output: {
     path: path.resolve(__dirname, "dist"),
@@ -56,10 +56,10 @@ module.exports = {
       },
     }),
     // uncomment these lines below for easier browser debugging in development mode
-    new webpack.SourceMapDevToolPlugin({
-      filename: "dist/[file].map",
-      fileContext: "public",
-    }),
+    // new webpack.SourceMapDevToolPlugin({
+    //   filename: "dist/[file].map",
+    //   fileContext: "public",
+    // }),
     // new BundleAnalyzerPlugin(),
   ],
 

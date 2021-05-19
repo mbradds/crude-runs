@@ -146,6 +146,7 @@ function seriesify(runData, unitsHolder) {
       data: [
         {
           name: "Western Canada",
+          id: "runs",
           data: [],
           color: cerPalette["Night Sky"],
           type: "area",
@@ -163,6 +164,7 @@ function seriesify(runData, unitsHolder) {
       data: [
         {
           name: "Quebec & Eastern Canada",
+          id: "runs",
           data: [],
           color: cerPalette.Flame,
           type: "area",
@@ -178,7 +180,13 @@ function seriesify(runData, unitsHolder) {
     {
       div: "runs-ontario",
       data: [
-        { name: "Ontario", data: [], color: cerPalette.Ocean, type: "area" },
+        {
+          name: "Ontario",
+          id: "runs",
+          data: [],
+          color: cerPalette.Ocean,
+          type: "area",
+        },
         {
           name: "Capacity",
           data: [],
@@ -203,7 +211,19 @@ function seriesify(runData, unitsHolder) {
   return { west, east, quebec, maxValue };
 }
 
-function runChart(series, maxY) {
+const dateFormat = (value, format = "%b %d, %Y") =>
+  Highcharts.dateFormat(format, value);
+
+function regionChartTooltip(event, units) {
+  let table = `<table>`;
+  table += `<tr><th>${dateFormat(event.x)}</th></tr>`;
+  table += `<tr><td>Weekly runs:&nbsp</td><td><strong>${event.points[0].y}&nbsp${units.label}</strong></td>`;
+  table += `<tr><td>Capacity:&nbsp</td><td><strong>${event.points[1].y}&nbsp${units.label}<strong></td>`;
+  table += `</table>`;
+  return table;
+}
+
+function createRegionChart(series, maxY, units) {
   return Highcharts.chart(series.div, {
     chart: {
       zoomType: "x",
@@ -240,7 +260,7 @@ function runChart(series, maxY) {
     yAxis: {
       max: maxY,
       title: {
-        text: "thousand b/d",
+        text: units.label,
       },
       tickAmount: 5,
       endOnTick: false,
@@ -248,49 +268,68 @@ function runChart(series, maxY) {
 
     tooltip: {
       shared: true,
+      useHTML: true,
+      formatter: function buildTooltip() {
+        return regionChartTooltip(this, units);
+      },
     },
 
     series: series.data,
   });
 }
 
-function buildAllRunCharts(series) {
-  const westChart = runChart(series.west, series.maxValue);
-  const eastChart = runChart(series.east, series.maxValue);
-  const quebecChart = runChart(series.quebec, series.maxValue);
+function buildAllRunCharts(series, units) {
+  const westChart = createRegionChart(series.west, series.maxValue, units);
+  const eastChart = createRegionChart(series.east, series.maxValue, units);
+  const quebecChart = createRegionChart(series.quebec, series.maxValue, units);
   return [westChart, eastChart, quebecChart];
+}
+
+function updateRegionChart(chart, series, region, units) {
+  chart.update({
+    series: series[region].data,
+    yAxis: {
+      max: series.maxValue,
+      title: {
+        text: units.label,
+      },
+    },
+  });
+}
+
+function unitsLabel(units) {
+  if (units.current === "m3/d") {
+    return "thousand m3/d";
+  }
+  return "thousand b/d";
 }
 
 function mainCrudeRuns() {
   const unitsHolder = { current: "b/d", base: "b/d" };
+  unitsHolder.label = unitsLabel(unitsHolder);
   createMap();
   let series = seriesify(data, unitsHolder);
-  const [westChart, eastChart, quebecChart] = buildAllRunCharts(series);
+  const [westChart, eastChart, quebecChart] = buildAllRunCharts(
+    series,
+    unitsHolder
+  );
 
   // user selects units
   document.getElementById("radio-units").addEventListener("click", (event) => {
     if (event.target && event.target.value) {
       const radioValue = event.target.value;
       unitsHolder.current = radioValue;
+      unitsHolder.label = unitsLabel(unitsHolder);
+      // let yTitle = "";
+      // if (unitsHolder.current === "b/d") {
+      //   yTitle = "thousand b/d";
+      // } else if (unitsHolder.current === "m3/d") {
+      //   yTitle = "thousand m3/d";
+      // }
       series = seriesify(data, unitsHolder);
-      westChart.update({
-        series: series.west.data,
-        yAxis: {
-          max: series.maxValue,
-        },
-      });
-      eastChart.update({
-        series: series.east.data,
-        yAxis: {
-          max: series.maxValue,
-        },
-      });
-      quebecChart.update({
-        series: series.quebec.data,
-        yAxis: {
-          max: series.maxValue,
-        },
-      });
+      updateRegionChart(westChart, series, "west", unitsHolder);
+      updateRegionChart(eastChart, series, "east", unitsHolder);
+      updateRegionChart(quebecChart, series, "quebec", unitsHolder);
     }
   });
 }
