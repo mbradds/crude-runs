@@ -215,10 +215,16 @@ const dateFormat = (value, format = "%b %d, %Y") =>
   Highcharts.dateFormat(format, value);
 
 function regionChartTooltip(event, units) {
+  const utilization = ((event.points[0].y / event.points[1].y) * 100).toFixed(
+    0
+  );
   let table = `<table>`;
-  table += `<tr><th>${dateFormat(event.x)}</th></tr>`;
+  table += `<caption style="padding:0px; padding-bottom:5px">${dateFormat(
+    event.x
+  )}</caption>`;
   table += `<tr><td>Weekly runs:&nbsp</td><td><strong>${event.points[0].y}&nbsp${units.label}</strong></td>`;
   table += `<tr><td>Capacity:&nbsp</td><td><strong>${event.points[1].y}&nbsp${units.label}<strong></td>`;
+  table += `<tr style="border-top: 1px solid grey"><td>Utilization:&nbsp</td><td><strong>${utilization}&nbsp%<strong></td>`;
   table += `</table>`;
   return table;
 }
@@ -227,6 +233,8 @@ function createRegionChart(series, maxY, units) {
   return Highcharts.chart(series.div, {
     chart: {
       zoomType: "x",
+      spacingBottom: 5,
+      spacingTop: 5,
     },
     title: {
       text: "",
@@ -257,6 +265,10 @@ function createRegionChart(series, maxY, units) {
       },
     },
 
+    legend: {
+      margin: 5,
+    },
+
     yAxis: {
       max: maxY,
       title: {
@@ -269,6 +281,7 @@ function createRegionChart(series, maxY, units) {
     tooltip: {
       shared: true,
       useHTML: true,
+      backgroundColor: "white",
       formatter: function buildTooltip() {
         return regionChartTooltip(this, units);
       },

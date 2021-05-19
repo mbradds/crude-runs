@@ -5,12 +5,18 @@
   color: #871455;
   margin-bottom: 0px;
 }
-.runs-chart {
-  height: 190px;
-}
 .runs-panel {
   height: 400px !important;
 }
-/* .canada-map {
-  height: 400px !important;
-} */
+/* small screen */
+@media only screen and (max-height: 900px), screen and (max-width: 1440px) {
+  .runs-chart {
+    height: 180px;
+  }
+}
+/* large screens */
+@media only screen and (min-height: 900px), screen and (min-width: 1440px) {
+  .runs-chart {
+    height: 200px;
+  }
+}
