@@ -26,122 +26,6 @@ function syncExtremes(e) {
   }
 }
 
-function seriesify(runData) {
-  const addToSeries = (series, row) => {
-    series.data[0].data.push([row.d, row.v]);
-    series.data[1].data.push([row.d, row.c]);
-    return series;
-  };
-  let [west, east, quebec] = [
-    {
-      div: "runs-west",
-      data: [
-        {
-          name: "Western Canada",
-          data: [],
-          color: cerPalette["Night Sky"],
-          type: "area",
-        },
-        {
-          name: "Capacity",
-          data: [],
-          color: cerPalette["Cool Grey"],
-          type: "line",
-        },
-      ],
-    },
-    {
-      div: "runs-east",
-      data: [
-        {
-          name: "Quebec & Eastern Canada",
-          data: [],
-          color: cerPalette.Flame,
-          type: "area",
-        },
-        {
-          name: "Capacity",
-          data: [],
-          color: cerPalette["Cool Grey"],
-          type: "line",
-        },
-      ],
-    },
-    {
-      div: "runs-ontario",
-      data: [
-        { name: "Ontario", data: [], color: cerPalette.Ocean, type: "area" },
-        {
-          name: "Capacity",
-          data: [],
-          color: cerPalette["Cool Grey"],
-          type: "line",
-        },
-      ],
-    },
-  ];
-  console.log(runData);
-  let maxValue = 0;
-  runData.forEach((row) => {
-    if (row.r === "w") {
-      west = addToSeries(west, row);
-    } else if (row.r === "o") {
-      east = addToSeries(east, row);
-    } else if (row.r === "q") {
-      quebec = addToSeries(quebec, row);
-    }
-    if (row.c > maxValue) {
-      maxValue = row.c;
-    }
-  });
-
-  return { west, east, quebec, maxValue };
-}
-
-function testChart(series, maxY) {
-  Highcharts.chart(series.div, {
-    chart: {
-      zoomType: "x",
-    },
-    title: {
-      text: "",
-    },
-
-    credits: {
-      text: "",
-    },
-
-    xAxis: {
-      type: "datetime",
-      crosshair: true,
-      events: {
-        setExtremes: syncExtremes,
-      },
-    },
-
-    plotOptions: {
-      line: {
-        lineWidth: 3,
-      },
-    },
-
-    yAxis: {
-      max: maxY + 15,
-      title: {
-        text: "thousand b/d",
-      },
-      startOnTick: false,
-      endOnTick: false,
-    },
-
-    tooltip: {
-      shared: true,
-    },
-
-    series: series.data,
-  });
-}
-
 function createMap(div = "canada-map") {
   return new Highcharts.mapChart(div, {
     chart: {
@@ -233,13 +117,182 @@ function createMap(div = "canada-map") {
   });
 }
 
+function seriesify(runData, unitsHolder) {
+  const addToSeries = (units) => {
+    if (units.current === "m3/d") {
+      return function adder(series, row, maxValue) {
+        const capacity = parseFloat((row.c / 6.2898).toFixed(1));
+        const runs = parseFloat((row.v / 6.2898).toFixed(1));
+        series.data[0].data.push([row.d, runs]);
+        series.data[1].data.push([row.d, capacity]);
+        if (capacity > maxValue) {
+          return [series, capacity];
+        }
+        return [series, maxValue];
+      };
+    }
+    return function adder(series, row, maxValue) {
+      series.data[0].data.push([row.d, row.v]);
+      series.data[1].data.push([row.d, row.c]);
+      if (row.c > maxValue) {
+        return [series, row.c];
+      }
+      return [series, maxValue];
+    };
+  };
+  let [west, east, quebec] = [
+    {
+      div: "runs-west",
+      data: [
+        {
+          name: "Western Canada",
+          data: [],
+          color: cerPalette["Night Sky"],
+          type: "area",
+        },
+        {
+          name: "Capacity",
+          data: [],
+          color: cerPalette["Cool Grey"],
+          type: "line",
+        },
+      ],
+    },
+    {
+      div: "runs-east",
+      data: [
+        {
+          name: "Quebec & Eastern Canada",
+          data: [],
+          color: cerPalette.Flame,
+          type: "area",
+        },
+        {
+          name: "Capacity",
+          data: [],
+          color: cerPalette["Cool Grey"],
+          type: "line",
+        },
+      ],
+    },
+    {
+      div: "runs-ontario",
+      data: [
+        { name: "Ontario", data: [], color: cerPalette.Ocean, type: "area" },
+        {
+          name: "Capacity",
+          data: [],
+          color: cerPalette["Cool Grey"],
+          type: "line",
+        },
+      ],
+    },
+  ];
+  let maxValue = 0;
+  const adder = addToSeries(unitsHolder);
+  runData.forEach((row) => {
+    if (row.r === "w") {
+      [west, maxValue] = adder(west, row, maxValue);
+    } else if (row.r === "o") {
+      [east, maxValue] = adder(east, row, maxValue);
+    } else if (row.r === "q") {
+      [quebec, maxValue] = adder(quebec, row, maxValue);
+    }
+  });
+
+  return { west, east, quebec, maxValue };
+}
+
+function runChart(series, maxY) {
+  return Highcharts.chart(series.div, {
+    chart: {
+      zoomType: "x",
+    },
+    title: {
+      text: "",
+    },
+
+    credits: {
+      text: "",
+    },
+
+    xAxis: {
+      type: "datetime",
+      crosshair: true,
+      events: {
+        setExtremes: syncExtremes,
+      },
+    },
+
+    plotOptions: {
+      line: {
+        lineWidth: 3,
+      },
+      series: {
+        events: {
+          legendItemClick: function noClick() {
+            return false;
+          },
+        },
+      },
+    },
+
+    yAxis: {
+      max: maxY,
+      title: {
+        text: "thousand b/d",
+      },
+      tickAmount: 5,
+      endOnTick: false,
+    },
+
+    tooltip: {
+      shared: true,
+    },
+
+    series: series.data,
+  });
+}
+
+function buildAllRunCharts(series) {
+  const westChart = runChart(series.west, series.maxValue);
+  const eastChart = runChart(series.east, series.maxValue);
+  const quebecChart = runChart(series.quebec, series.maxValue);
+  return [westChart, eastChart, quebecChart];
+}
+
 function mainCrudeRuns() {
-  const mapRegions = createMap();
-  const series = seriesify(data);
-  console.log(mapRegions);
-  testChart(series.west, series.maxValue);
-  testChart(series.east, series.maxValue);
-  testChart(series.quebec, series.maxValue);
+  const unitsHolder = { current: "b/d", base: "b/d" };
+  createMap();
+  let series = seriesify(data, unitsHolder);
+  const [westChart, eastChart, quebecChart] = buildAllRunCharts(series);
+
+  // user selects units
+  document.getElementById("radio-units").addEventListener("click", (event) => {
+    if (event.target && event.target.value) {
+      const radioValue = event.target.value;
+      unitsHolder.current = radioValue;
+      series = seriesify(data, unitsHolder);
+      westChart.update({
+        series: series.west.data,
+        yAxis: {
+          max: series.maxValue,
+        },
+      });
+      eastChart.update({
+        series: series.east.data,
+        yAxis: {
+          max: series.maxValue,
+        },
+      });
+      quebecChart.update({
+        series: series.quebec.data,
+        yAxis: {
+          max: series.maxValue,
+        },
+      });
+    }
+  });
 }
 
 mainCrudeRuns();
