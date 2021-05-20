@@ -140,7 +140,7 @@ function seriesify(runData, unitsHolder) {
       return [series, maxValue];
     };
   };
-  let [west, east, quebec] = [
+  let [west, quebec, ontario] = [
     {
       div: "runs-west",
       data: [
@@ -160,7 +160,7 @@ function seriesify(runData, unitsHolder) {
       ],
     },
     {
-      div: "runs-east",
+      div: "runs-quebec",
       data: [
         {
           name: "Quebec & Eastern Canada",
@@ -202,13 +202,13 @@ function seriesify(runData, unitsHolder) {
     if (row.r === "w") {
       [west, maxValue] = adder(west, row, maxValue);
     } else if (row.r === "o") {
-      [east, maxValue] = adder(east, row, maxValue);
+      [ontario, maxValue] = adder(ontario, row, maxValue);
     } else if (row.r === "q") {
       [quebec, maxValue] = adder(quebec, row, maxValue);
     }
   });
 
-  return { west, east, quebec, maxValue };
+  return { west, ontario, quebec, maxValue };
 }
 
 const dateFormat = (value, format = "%b %d, %Y") =>
@@ -293,9 +293,9 @@ function createRegionChart(series, maxY, units) {
 
 function buildAllRunCharts(series, units) {
   const westChart = createRegionChart(series.west, series.maxValue, units);
-  const eastChart = createRegionChart(series.east, series.maxValue, units);
+  const ontarioChart = createRegionChart(series.ontario, series.maxValue, units);
   const quebecChart = createRegionChart(series.quebec, series.maxValue, units);
-  return [westChart, eastChart, quebecChart];
+  return [westChart, ontarioChart, quebecChart];
 }
 
 function updateRegionChart(chart, series, region, units) {
@@ -322,7 +322,7 @@ function mainCrudeRuns() {
   unitsHolder.label = unitsLabel(unitsHolder);
   createMap();
   let series = seriesify(data, unitsHolder);
-  const [westChart, eastChart, quebecChart] = buildAllRunCharts(
+  const [westChart, ontarioChart, quebecChart] = buildAllRunCharts(
     series,
     unitsHolder
   );
@@ -335,7 +335,7 @@ function mainCrudeRuns() {
       unitsHolder.label = unitsLabel(unitsHolder);
       series = seriesify(data, unitsHolder);
       updateRegionChart(westChart, series, "west", unitsHolder);
-      updateRegionChart(eastChart, series, "east", unitsHolder);
+      updateRegionChart(ontarioChart, series, "ontario", unitsHolder);
       updateRegionChart(quebecChart, series, "quebec", unitsHolder);
     }
   });
