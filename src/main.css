@@ -1,13 +1,16 @@
-.cerlabel {
-  position: center;
-  font-family: Arial;
-  font-weight: bold;
-  color: #871455;
-  margin-bottom: 0px;
+body {
+  font-size: 20px;
+  line-height: 1.65em;
 }
+
 .runs-panel {
   height: 400px !important;
 }
+.runs-panel p {
+  font-size: 16px !important;
+  line-height: 1.4375 !important;
+}
+
 .text-highlight {
   font-style: normal;
   font-weight: bold;

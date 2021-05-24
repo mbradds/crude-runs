@@ -2,9 +2,45 @@ const path = require("path");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const htmlText = require("./src/htmlText");
 // const BundleAnalyzerPlugin = require("webpack-bundle-analyzer")
 //   .BundleAnalyzerPlugin;
 // const webpack = require("webpack");
+
+const pages = function switchLanguage() {
+  const language = ["en", "fr"];
+
+  const htmlPlugins = [];
+  language.forEach((lang) => {
+    const pageData = {};
+    if (lang === "en") {
+      pageData.lang = { en: true, fr: false };
+    } else if (lang === "fr") {
+      pageData.lang = { en: false, fr: true };
+    }
+    pageData.text = htmlText[lang];
+    htmlPlugins.push(
+      new HtmlWebpackPlugin({
+        page: JSON.parse(JSON.stringify(pageData)),
+        filename: `index_${lang}.html`,
+        chunks: "all",
+        chunksSortMode: "auto",
+        template: "src/components/index.hbs",
+        minify: {
+          collapseWhitespace: false,
+          keepClosingSlash: false,
+          removeComments: false,
+          removeRedundantAttributes: false,
+          removeScriptTypeAttributes: false,
+          removeStyleLinkTypeAttributes: false,
+          useShortDoctype: false,
+        },
+      })
+    );
+  });
+
+  return htmlPlugins;
+};
 
 module.exports = {
   // mode: "development",
@@ -16,6 +52,7 @@ module.exports = {
   },
 
   devServer: {
+    index: "index_en.html",
     compress: true,
     contentBase: "./dist",
     publicPath: "/",
@@ -42,21 +79,7 @@ module.exports = {
       ],
     }),
     new CleanWebpackPlugin(),
-    new HtmlWebpackPlugin({
-      filename: "index.html",
-      chunks: "all",
-      chunksSortMode: "auto",
-      template: "src/index.html",
-      minify: {
-        collapseWhitespace: false,
-        keepClosingSlash: false,
-        removeComments: false,
-        removeRedundantAttributes: false,
-        removeScriptTypeAttributes: false,
-        removeStyleLinkTypeAttributes: false,
-        useShortDoctype: false,
-      },
-    }),
+    ...pages(),
     // uncomment these lines below for easier browser debugging in development mode
     // new webpack.SourceMapDevToolPlugin({
     //   filename: "dist/[file].map",
@@ -76,6 +99,14 @@ module.exports = {
         exclude: /node_modules/,
         use: {
           loader: "babel-loader",
+        },
+      },
+      {
+        test: /\.hbs$/,
+        loader: "handlebars-loader",
+        options: {
+          precompileOptions: { noEscape: true, strict: true },
+          // runtime: path.resolve(__dirname, "src/components/helpers.js"),
         },
       },
     ],

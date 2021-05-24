@@ -1,5 +1,9 @@
 <!DOCTYPE html>
+{{#if htmlWebpackPlugin.options.page.lang.en}}
 <html lang="en">
+{{else if htmlWebpackPlugin.options.page.lang.fr}}
+<html lang="fr">
+{{/if}}
   <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -18,8 +22,25 @@
     <div class="container">
       <div class="row">
         <div class="col-md-12">
+          <section id="wb-lng" class="visible-md visible-lg">
+            <h2>Language selection</h2>
+            <ul class="text-right list-inline margin-bottom-none">
+              <li>
+                <a
+                  lang="fr"
+                  hreflang="fr"
+                  href="/index_fr.html"
+                  >Français</a
+                >
+              </li>
+            </ul>
+          </section>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
           <h1 id="wb-cont" property="name">
-            Weekly Crude Run Summary and Data
+            {{htmlWebpackPlugin.options.page.text.h1}}
           </h1>
         </div>
       </div>
@@ -27,7 +48,7 @@
         <div class="col-md-6">
           <section class="panel panel-default hght-inhrt runs-panel">
             <header class="panel-heading">
-              <h5 class="panel-title">Crude Region Map</h5>
+              <h5 class="panel-title">{{htmlWebpackPlugin.options.page.text.mapHeader}}</h5>
             </header>
             <div class="panel-body">
               <div id="canada-map"></div>
@@ -37,40 +58,20 @@
         <div class="col-md-6">
           <section class="panel panel-default hght-inhrt runs-panel">
             <header class="panel-heading">
-              <h5 class="panel-title">What are Crude Runs?</h5>
+              <h5 class="panel-title">{{htmlWebpackPlugin.options.page.text.whatHeader}}</h5>
             </header>
             <div class="panel-body">
               <p>
-                Crude runs represent the volume of crude oil consumed by
-                refineries. The crude oil is then processed into various refined
-                products such as
-                <i class="bg-info text-highlight"
-                  >&nbspgasoline, diesel, and jet fuel&nbsp</i
-                >. Manitoba, Nova Scotia, PEI, and the Territories do not have
-                crude oil refineries.
+                {{htmlWebpackPlugin.options.page.text.whatP.one}}
               </p>
               <p>
-                Data is provided to the CER
-                <i class="bg-info text-highlight"
-                  >&nbspvoluntarily by the refinery operators,&nbsp</i
-                >
-                and aggregated into three regions for confidentiality reasons.
+                {{htmlWebpackPlugin.options.page.text.whatP.two}}
               </p>
               <p>
-                <i class="bg-info text-highlight"
-                  >&nbspRefining capacity is an estimate&nbsp</i
-                >
-                and fluctuates over time based on several factors such as the
-                type of crude entering the refinery, and the desired refined
-                product mix produced.
+                {{htmlWebpackPlugin.options.page.text.whatP.three}}
               </p>
               <p>
-                This dashboard is updated monthly. Please take a look at the
-                <i class="bg-info text-highlight"
-                  >&nbspdata download options below&nbsp</i
-                >
-                for the most recent data with additional metrics such as
-                four-week average and year-to-date average.
+                {{htmlWebpackPlugin.options.page.text.whatP.four}}
               </p>
             </div>
           </section>
@@ -82,7 +83,7 @@
             <header class="panel-heading">
               <div class="chart-header">
                 <h5 class="panel-title" style="display: inline">
-                  Crude Run Charts
+                  {{htmlWebpackPlugin.options.page.text.chartHeader}}
                 </h5>
                 <div id="radio-units" class="radio-inline pull-right">
                   <form>
@@ -94,7 +95,7 @@
                         value="b/d"
                         checked="checked"
                       />
-                      thousand b/d</label
+                      {{htmlWebpackPlugin.options.page.text.units.imperial}}</label
                     >
                     <label for="crude-runs-m3-btn" class="radio-inline">
                       <input
@@ -103,7 +104,7 @@
                         name="type"
                         value="m3/d"
                       />
-                      thousand m3/d</label
+                      {{htmlWebpackPlugin.options.page.text.units.metric}}</label
                     >
                   </form>
                 </div>
@@ -119,14 +120,42 @@
           </section>
         </div>
         <div class="col-md-12" style="height: 200px">
-          <details>
-            <summary>Dashboard Instructions</summary>
+          <details class="mrgn-bttm-lg">
+            <summary>{{htmlWebpackPlugin.options.page.text.instructionsHeader}}</summary>
             <p>
-              Click and drag your cursor on one of the charts to filter to a
-              desired date range for all charts. Click on the reset zoom button
-              in the top right of the chart to return to full date zoom.
+              {{htmlWebpackPlugin.options.page.text.instructionsP.one}}
             </p>
           </details>
+
+          <p><strong>Data:</strong></p>
+          <ul class="lst-spcd">
+            <li>
+              <a
+                href="https://apps.cer-rec.gc.ca/WCR/WCRRegionalSummary.aspx?lang=English"
+                >Weekly Crude Run Summary</a
+              ><br />
+              Volume, year to date average
+            </li>
+            <li>
+              Historical Weekly Crude Run Data (updated as of 27&nbsp;April
+              2021)
+              <a
+                href="/en/data-analysis/energy-commodities/crude-oil-petroleum-products/statistics/crdrn-hstrcl.xlsx"
+                title="Historical Weekly Crude Run Data"
+                >[EXCEL&nbsp;331&nbsp;KB]</a
+              >
+            </li>
+          </ul>
+          <p>
+            For further information, contact
+            <a href="mailto:request.demande@cer-rec.gc.ca"
+              >request.demande@cer-rec.gc.ca</a
+            >.
+          </p>
+          <dl id="wb-dtmd">
+            <dt>Date modified:</dt>
+            <dd><time property="dateModified">2021-05-11</time></dd>
+          </dl>
         </div>
       </div>
     </div>
