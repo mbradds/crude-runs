@@ -61,7 +61,7 @@ def get_data():
 
 
 if __name__ == "__main__":
-    print('starting conditions...')
+    print('starting crude runs data update...')
     # links = orca_regdocs_links(True)
     df = get_data()
-    print('completed conditions!')
+    print('completed data update!')

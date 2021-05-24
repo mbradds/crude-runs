@@ -12,7 +12,7 @@
     "start": "node server.js",
     "heroku-postbuild": "webpack",
     "dev": "webpack serve",
-    "update-data": "",
+    "update-data": "sh ./src/data_management/update_data.sh",
     "test": "ava"
   },
   "author": "",
