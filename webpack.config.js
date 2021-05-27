@@ -23,7 +23,7 @@ const pages = function switchLanguage() {
       new HtmlWebpackPlugin({
         page: JSON.parse(JSON.stringify(pageData)),
         filename: `index_${lang}.html`,
-        chunks: "all",
+        chunks: [`${lang}`],
         chunksSortMode: "auto",
         template: "src/components/index.hbs",
         minify: {
@@ -45,7 +45,7 @@ const pages = function switchLanguage() {
 module.exports = {
   // mode: "development",
   mode: "production",
-  entry: "./src/dashboard.js",
+  entry: { en: "./src/index_en.js", fr: "./src/index_fr.js" },
   output: {
     path: path.resolve(__dirname, "dist"),
     filename: "[name].[contenthash].js",

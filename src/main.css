@@ -3,9 +3,10 @@ body {
   line-height: 1.65em;
 }
 
-.runs-panel {
-  height: 400px !important;
+.runs-panel .panel-body {
+  padding-bottom: 0px;
 }
+
 .runs-panel p {
   font-size: 16px !important;
   line-height: 1.4375 !important;
@@ -18,7 +19,7 @@ body {
 /* small screen */
 @media only screen and (max-height: 900px), screen and (max-width: 1440px) {
   .runs-chart {
-    height: 180px;
+    height: 170px;
   }
 }
 /* large screens */

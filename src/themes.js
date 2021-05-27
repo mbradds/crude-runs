@@ -82,7 +82,7 @@ export const generalTheme = (Highcharts) => {
   Highcharts.setOptions(Highcharts.profiles);
 };
 
-export const frenchTheme = () => {
+export const frenchTheme = (Highcharts) => {
   Highcharts.french = {
     lang: {
       months: [

@@ -25,7 +25,7 @@ const lang = {
     and fluctuates over time based on several factors such as the
     type of crude entering the refinery, and the desired refined
     product mix produced.`,
-      four: `This dashboard is updated monthly. Please take a look at the
+      four: `Please take a look at the
     <i class="bg-info text-highlight"
       >&nbspdata download options below&nbsp</i
     >
@@ -62,7 +62,7 @@ const lang = {
     and fluctuates over time based on several factors such as the
     type of crude entering the refinery, and the desired refined
     product mix produced.`,
-      four: `FR: This dashboard is updated monthly. Please take a look at the
+      four: `FR: Please take a look at the
     <i class="bg-info text-highlight"
       >&nbspdata download options below&nbsp</i
     >

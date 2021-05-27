@@ -30,8 +30,9 @@ function createMap(div = "canada-map") {
   return new Highcharts.mapChart(div, {
     chart: {
       type: "map",
-      height: 330,
+      height: 350,
       margin: [0, 0, 20, 0],
+      spacingBottom: 0,
       map,
     },
     title: {
@@ -53,8 +54,14 @@ function createMap(div = "canada-map") {
       },
     },
     legend: {
-      floating: false,
-      y: 15,
+      align: "center",
+      verticalAlign: "bottom",
+      backgroundColor: "white",
+      padding: 3,
+      // borderColor: cerPalette["Dim Grey"],
+      // borderRadius: 0,
+      // borderWidth: 1,
+      // y: 2,
     },
     tooltip: {
       useHTML: true,
@@ -293,7 +300,11 @@ function createRegionChart(series, maxY, units) {
 
 function buildAllRunCharts(series, units) {
   const westChart = createRegionChart(series.west, series.maxValue, units);
-  const ontarioChart = createRegionChart(series.ontario, series.maxValue, units);
+  const ontarioChart = createRegionChart(
+    series.ontario,
+    series.maxValue,
+    units
+  );
   const quebecChart = createRegionChart(series.quebec, series.maxValue, units);
   return [westChart, ontarioChart, quebecChart];
 }
@@ -310,16 +321,19 @@ function updateRegionChart(chart, series, region, units) {
   });
 }
 
-function unitsLabel(units) {
+function unitsLabel(units, lang) {
   if (units.current === "m3/d") {
-    return "thousand m3/d";
+    return lang.units.metric;
   }
-  return "thousand b/d";
+  return lang.units.imperial;
 }
 
-function mainCrudeRuns() {
+export function mainCrudeRuns(lang, languageTheme = false) {
+  if (languageTheme) {
+    languageTheme(Highcharts);
+  }
   const unitsHolder = { current: "b/d", base: "b/d" };
-  unitsHolder.label = unitsLabel(unitsHolder);
+  unitsHolder.label = unitsLabel(unitsHolder, lang);
   createMap();
   let series = seriesify(data, unitsHolder);
   const [westChart, ontarioChart, quebecChart] = buildAllRunCharts(
@@ -341,4 +355,4 @@ function mainCrudeRuns() {
   });
 }
 
-mainCrudeRuns();
+// mainCrudeRuns();
