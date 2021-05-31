@@ -1,6 +1,8 @@
 import pandas as pd
 import os
 import ssl
+from datetime import date
+import json
 ssl._create_default_https_context = ssl._create_unverified_context
 script_dir = os.path.dirname(__file__)
 
@@ -56,6 +58,12 @@ def get_data():
     del df["t"]
     df = df.sort_values(by="d")
     df.to_json('runs.json', orient='records')
+
+    meta = {}
+    today = date.today()
+    meta['updated'] = [today.year, today.month-1, today.day]
+    with open('meta.json', 'w') as fp:
+        json.dump(meta, fp)
 
     return df
 

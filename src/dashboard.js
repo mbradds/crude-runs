@@ -2,11 +2,25 @@ import Highcharts from "highcharts";
 import MapModule from "highcharts/modules/map";
 import map from "@highcharts/map-collection/countries/ca/ca-all.geo.json";
 import data from "./data_management/runs.json";
+import meta from "./data_management/meta.json";
 import { cerPalette } from "./util";
 import { generalTheme } from "./themes";
 
 MapModule(Highcharts);
 generalTheme(Highcharts);
+
+function addUpdated(lang) {
+  const now = new Date(meta.updated[0], meta.updated[1], meta.updated[2]);
+  const nowString = Highcharts.dateFormat("%b %d, %Y", now);
+
+  const next = new Date(now.setMonth(now.getMonth() + 1));
+  const nextString = Highcharts.dateFormat("%b %Y", next);
+
+  document.getElementById("updated").innerHTML = lang.updated(
+    nowString,
+    nextString
+  );
+}
 
 function syncExtremes(e) {
   const thisChart = this.chart;
@@ -58,10 +72,6 @@ function createMap(div = "canada-map") {
       verticalAlign: "bottom",
       backgroundColor: "white",
       padding: 3,
-      // borderColor: cerPalette["Dim Grey"],
-      // borderRadius: 0,
-      // borderWidth: 1,
-      // y: 2,
     },
     tooltip: {
       useHTML: true,
@@ -332,6 +342,7 @@ export function mainCrudeRuns(lang, languageTheme = false) {
   if (languageTheme) {
     languageTheme(Highcharts);
   }
+  addUpdated(lang);
   const unitsHolder = { current: "b/d", base: "b/d" };
   unitsHolder.label = unitsLabel(unitsHolder, lang);
   createMap();
@@ -354,5 +365,3 @@ export function mainCrudeRuns(lang, languageTheme = false) {
     }
   });
 }
-
-// mainCrudeRuns();
