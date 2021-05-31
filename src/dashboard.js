@@ -40,7 +40,7 @@ function syncExtremes(e) {
   }
 }
 
-function createMap(div = "canada-map") {
+function createMap(lang, div = "canada-map") {
   return new Highcharts.mapChart(div, {
     chart: {
       type: "map",
@@ -93,7 +93,7 @@ function createMap(div = "canada-map") {
         showInLegend: false,
       },
       {
-        name: "Western Canada",
+        name: lang.seriesNames.west,
         data: [
           ["ca-ab", 5],
           ["ca-bc", 2],
@@ -102,12 +102,12 @@ function createMap(div = "canada-map") {
         color: cerPalette["Night Sky"],
       },
       {
-        name: "Ontario",
+        name: lang.seriesNames.ontario,
         data: [["ca-on", 4]],
         color: cerPalette.Ocean,
       },
       {
-        name: "Quebec & Eastern Canada",
+        name: lang.seriesNames.quebec,
         data: [
           ["ca-qc", 2],
           ["ca-nb", 1],
@@ -134,7 +134,7 @@ function createMap(div = "canada-map") {
   });
 }
 
-function seriesify(runData, unitsHolder) {
+function seriesify(runData, unitsHolder, lang) {
   const addToSeries = (units) => {
     if (units.current === "m3/d") {
       return function adder(series, row, maxValue) {
@@ -157,19 +157,20 @@ function seriesify(runData, unitsHolder) {
       return [series, maxValue];
     };
   };
+
   let [west, quebec, ontario] = [
     {
       div: "runs-west",
       data: [
         {
-          name: "Western Canada",
+          name: lang.seriesNames.west,
           id: "runs",
           data: [],
           color: cerPalette["Night Sky"],
           type: "area",
         },
         {
-          name: "Capacity",
+          name: lang.seriesNames.capacity,
           data: [],
           color: cerPalette["Cool Grey"],
           type: "line",
@@ -180,14 +181,14 @@ function seriesify(runData, unitsHolder) {
       div: "runs-quebec",
       data: [
         {
-          name: "Quebec & Eastern Canada",
+          name: lang.seriesNames.quebec,
           id: "runs",
           data: [],
           color: cerPalette.Flame,
           type: "area",
         },
         {
-          name: "Capacity",
+          name: lang.seriesNames.capacity,
           data: [],
           color: cerPalette["Cool Grey"],
           type: "line",
@@ -198,14 +199,14 @@ function seriesify(runData, unitsHolder) {
       div: "runs-ontario",
       data: [
         {
-          name: "Ontario",
+          name: lang.seriesNames.ontario,
           id: "runs",
           data: [],
           color: cerPalette.Ocean,
           type: "area",
         },
         {
-          name: "Capacity",
+          name: lang.seriesNames.capacity,
           data: [],
           color: cerPalette["Cool Grey"],
           type: "line",
@@ -213,6 +214,7 @@ function seriesify(runData, unitsHolder) {
       ],
     },
   ];
+
   let maxValue = 0;
   const adder = addToSeries(unitsHolder);
   runData.forEach((row) => {
@@ -231,7 +233,7 @@ function seriesify(runData, unitsHolder) {
 const dateFormat = (value, format = "%b %d, %Y") =>
   Highcharts.dateFormat(format, value);
 
-function regionChartTooltip(event, units) {
+function regionChartTooltip(event, units, langTool) {
   const utilization = ((event.points[0].y / event.points[1].y) * 100).toFixed(
     0
   );
@@ -239,14 +241,14 @@ function regionChartTooltip(event, units) {
   table += `<caption style="padding:0px; padding-bottom:5px">${dateFormat(
     event.x
   )}</caption>`;
-  table += `<tr><td>Weekly runs:&nbsp</td><td><strong>${event.points[0].y}&nbsp${units.label}</strong></td>`;
-  table += `<tr><td>Capacity:&nbsp</td><td><strong>${event.points[1].y}&nbsp${units.label}<strong></td>`;
-  table += `<tr style="border-top: 1px solid grey"><td>Utilization:&nbsp</td><td><strong>${utilization}&nbsp%<strong></td>`;
+  table += `<tr><td>${langTool.runs}&nbsp</td><td><strong>${event.points[0].y}&nbsp${units.label}</strong></td>`;
+  table += `<tr><td>${langTool.cap}&nbsp</td><td><strong>${event.points[1].y}&nbsp${units.label}<strong></td>`;
+  table += `<tr style="border-top: 1px solid grey"><td>${langTool.util}&nbsp</td><td><strong>${utilization}&nbsp%<strong></td>`;
   table += `</table>`;
   return table;
 }
 
-function createRegionChart(series, maxY, units) {
+function createRegionChart(series, maxY, units, lang) {
   return Highcharts.chart(series.div, {
     chart: {
       zoomType: "x",
@@ -300,7 +302,7 @@ function createRegionChart(series, maxY, units) {
       useHTML: true,
       backgroundColor: "white",
       formatter: function buildTooltip() {
-        return regionChartTooltip(this, units);
+        return regionChartTooltip(this, units, lang.toolTip);
       },
     },
 
@@ -308,14 +310,25 @@ function createRegionChart(series, maxY, units) {
   });
 }
 
-function buildAllRunCharts(series, units) {
-  const westChart = createRegionChart(series.west, series.maxValue, units);
+function buildAllRunCharts(series, units, lang) {
+  const westChart = createRegionChart(
+    series.west,
+    series.maxValue,
+    units,
+    lang
+  );
   const ontarioChart = createRegionChart(
     series.ontario,
     series.maxValue,
-    units
+    units,
+    lang
   );
-  const quebecChart = createRegionChart(series.quebec, series.maxValue, units);
+  const quebecChart = createRegionChart(
+    series.quebec,
+    series.maxValue,
+    units,
+    lang
+  );
   return [westChart, ontarioChart, quebecChart];
 }
 
@@ -345,11 +358,12 @@ export function mainCrudeRuns(lang, languageTheme = false) {
   addUpdated(lang);
   const unitsHolder = { current: "b/d", base: "b/d" };
   unitsHolder.label = unitsLabel(unitsHolder, lang);
-  createMap();
-  let series = seriesify(data, unitsHolder);
+  createMap(lang);
+  let series = seriesify(data, unitsHolder, lang);
   const [westChart, ontarioChart, quebecChart] = buildAllRunCharts(
     series,
-    unitsHolder
+    unitsHolder,
+    lang
   );
 
   // user selects units
@@ -357,8 +371,8 @@ export function mainCrudeRuns(lang, languageTheme = false) {
     if (event.target && event.target.value) {
       const radioValue = event.target.value;
       unitsHolder.current = radioValue;
-      unitsHolder.label = unitsLabel(unitsHolder);
-      series = seriesify(data, unitsHolder);
+      unitsHolder.label = unitsLabel(unitsHolder, lang);
+      series = seriesify(data, unitsHolder, lang);
       updateRegionChart(westChart, series, "west", unitsHolder);
       updateRegionChart(ontarioChart, series, "ontario", unitsHolder);
       updateRegionChart(quebecChart, series, "quebec", unitsHolder);
