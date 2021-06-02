@@ -78,7 +78,8 @@ function createMap(lang, div = "canada-map") {
       formatter: function mapTooltip() {
         if (this.point.value > 0) {
           const header = `<strong>${this.series.name}</strong><br>`;
-          const postWord = this.point.value > 1 ? "refineries" : "refinery";
+          const postWord =
+            this.point.value > 1 ? lang.refineries : lang.refinery;
           const body = `${this.key} - ${this.point.value} ${postWord}`;
           return header + body;
         }

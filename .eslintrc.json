@@ -12,6 +12,7 @@
     "no-nested-ternary": "off",
     "max-classes-per-file": "off",
     "no-underscore-dangle": "warn",
-    "new-cap": "warn"
+    "new-cap": "warn",
+    "no-irregular-whitespace": "warn"
   }
 }
