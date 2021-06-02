@@ -73,7 +73,7 @@ function createMap(lang, div = "canada-map") {
       backgroundColor: "white",
       itemDistance: 10,
       symbolPadding: 3,
-      padding: 0,
+      padding: 3,
     },
     tooltip: {
       useHTML: true,
