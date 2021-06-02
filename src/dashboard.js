@@ -71,7 +71,9 @@ function createMap(lang, div = "canada-map") {
       align: "center",
       verticalAlign: "bottom",
       backgroundColor: "white",
-      padding: 3,
+      itemDistance: 10,
+      symbolPadding: 3,
+      padding: 0,
     },
     tooltip: {
       useHTML: true,
