@@ -254,7 +254,7 @@ function createRegionChart(series, maxY, units, lang) {
     chart: {
       zoomType: "x",
       spacingBottom: 5,
-      spacingTop: 5,
+      spacingTop: 7,
     },
     title: {
       text: "",
