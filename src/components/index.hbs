@@ -9,8 +9,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link href="../GCWeb/assets/favicon.ico" rel="icon" type="image/x-icon" />
-    <link rel="preload" href="css/main.css" as="style" />
-    <link rel="stylesheet" href="css/main.css" />
+    {{!-- put production css here --}}
     <link rel="stylesheet" href="GCWeb/css/theme.min.css" />
     <link rel="stylesheet" href="GCWeb/css/gcwu.custom.css" />
     <noscript
@@ -60,7 +59,7 @@
             <header class="panel-heading">
               <h5 class="panel-title">{{htmlWebpackPlugin.options.page.text.whatHeader}}</h5>
             </header>
-            <div class="panel-body">
+            <div class="panel-body dashboard-style">
               <p>
                 {{htmlWebpackPlugin.options.page.text.whatP.one}}
               </p>
@@ -80,9 +79,9 @@
       <div class="row">
         <div class="col-md-12">
           <section class="panel panel-default">
-            <header class="panel-heading">
+            <header class="panel-heading dashboard-style">
               <div class="chart-header">
-                <h5 class="panel-title" style="display: inline">
+                <h5 class="panel-title" id="chart-title">
                   {{htmlWebpackPlugin.options.page.text.chartHeader}}
                 </h5>
                 <div id="radio-units" class="radio-inline pull-right">
@@ -118,7 +117,7 @@
               </div>
             </div>
             <footer class="panel-footer">
-              <div id="updated"></div>
+              <div class="dashboard-style" id="updated"></div>
             </footer>
           </section>
         </div>

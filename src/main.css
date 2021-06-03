@@ -7,9 +7,13 @@ body {
   padding-bottom: 0px;
 }
 
-.runs-panel p {
+.dashboard-style {
   font-size: 16px !important;
   line-height: 1.4375 !important;
+}
+
+#chart-title {
+  display: inline !important;
 }
 
 .text-highlight {

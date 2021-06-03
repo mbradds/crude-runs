@@ -6,6 +6,8 @@ import meta from "./data_management/meta.json";
 import { cerPalette } from "./util";
 import { generalTheme } from "./themes";
 
+require("./main.css");
+
 MapModule(Highcharts);
 generalTheme(Highcharts);
 

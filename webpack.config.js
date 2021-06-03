@@ -1,6 +1,7 @@
 const path = require("path");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const htmlText = require("./src/htmlText");
 // const BundleAnalyzerPlugin = require("webpack-bundle-analyzer")
@@ -65,10 +66,6 @@ module.exports = {
     new CopyWebpackPlugin({
       patterns: [
         {
-          from: path.resolve(__dirname, "src", "main.css"),
-          to: path.resolve(__dirname, "dist", "css/main.css"),
-        },
-        {
           from: path.resolve(__dirname, "src", "GCWeb"),
           to: path.resolve(__dirname, "dist", "GCWeb"),
         },
@@ -79,6 +76,9 @@ module.exports = {
       ],
     }),
     new CleanWebpackPlugin(),
+    new MiniCssExtractPlugin({
+      filename: "css/main.[contenthash].css",
+    }),
     ...pages(),
     // uncomment these lines below for easier browser debugging in development mode
     // new webpack.SourceMapDevToolPlugin({
@@ -100,6 +100,11 @@ module.exports = {
         use: {
           loader: "babel-loader",
         },
+      },
+      {
+        test: /\.css$/i,
+        exclude: /node_modules/,
+        use: [MiniCssExtractPlugin.loader, "css-loader"],
       },
       {
         test: /\.hbs$/,
