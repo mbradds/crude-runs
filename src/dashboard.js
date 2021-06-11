@@ -42,8 +42,8 @@ function syncExtremes(e) {
   }
 }
 
-function createMap(lang, div = "canada-map") {
-  return new Highcharts.mapChart(div, {
+async function createMap(lang, div = "canada-map") {
+  const canada = await new Highcharts.mapChart(div, {
     chart: {
       type: "map",
       height: 350,
@@ -137,6 +137,7 @@ function createMap(lang, div = "canada-map") {
       },
     ],
   });
+  return canada;
 }
 
 function seriesify(runData, unitsHolder, lang) {
@@ -356,6 +357,28 @@ function unitsLabel(units, lang) {
   return lang.units.imperial;
 }
 
+/**
+ * Overrides the wet4 equal height if it doesnt work.
+ * @param {string} divId1 - HTML id of div to compare to second parameter
+ * @param {string} divId2 - HMTL id of div to compare to first parameter
+ */
+export function equalizeHeight(divId1, divId2) {
+  const d1 = document.getElementById(divId1);
+  const d2 = document.getElementById(divId2);
+
+  d1.style.height = "auto";
+  d2.style.height = "auto";
+
+  const d1Height = d1.clientHeight;
+  const d2Height = d2.clientHeight;
+
+  const maxHeight = Math.max(d1Height, d2Height);
+  if (d1Height !== maxHeight || d2Height !== maxHeight) {
+    d1.style.height = `${maxHeight}px`;
+    d2.style.height = `${maxHeight}px`;
+  }
+}
+
 export function mainCrudeRuns(lang, languageTheme = false) {
   if (languageTheme) {
     languageTheme(Highcharts);
@@ -363,7 +386,14 @@ export function mainCrudeRuns(lang, languageTheme = false) {
   addUpdated(lang);
   const unitsHolder = { current: "b/d", base: "b/d" };
   unitsHolder.label = unitsLabel(unitsHolder, lang);
-  createMap(lang);
+
+  // equalize heights after map is loaded and dom is ready
+  window.addEventListener("DOMContentLoaded", () => {
+    createMap(lang).then(() => {
+      equalizeHeight("eq-ht-1", "eq-ht-2");
+    });
+  });
+
   let series = seriesify(data, unitsHolder, lang);
   const [westChart, ontarioChart, quebecChart] = buildAllRunCharts(
     series,
