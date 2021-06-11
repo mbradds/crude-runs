@@ -1,7 +1,7 @@
 import Highcharts from "highcharts";
 import MapModule from "highcharts/modules/map";
 import map from "@highcharts/map-collection/countries/ca/ca-all.geo.json";
-import 'core-js/modules/es.promise';
+import "core-js/modules/es.promise";
 import data from "./data_management/runs.json";
 import meta from "./data_management/meta.json";
 import { cerPalette } from "./util";
