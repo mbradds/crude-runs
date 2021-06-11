@@ -1,6 +1,7 @@
 import Highcharts from "highcharts";
 import MapModule from "highcharts/modules/map";
 import map from "@highcharts/map-collection/countries/ca/ca-all.geo.json";
+import 'core-js/modules/es.promise';
 import data from "./data_management/runs.json";
 import meta from "./data_management/meta.json";
 import { cerPalette } from "./util";
@@ -389,9 +390,14 @@ export function mainCrudeRuns(lang, languageTheme = false) {
 
   // equalize heights after map is loaded and dom is ready
   window.addEventListener("DOMContentLoaded", () => {
-    createMap(lang).then(() => {
-      equalizeHeight("eq-ht-1", "eq-ht-2");
-    });
+    createMap(lang)
+      .then(() => {
+        equalizeHeight("eq-ht-1", "eq-ht-2");
+      })
+      .catch((e) => {
+        console.log("map promise error", e);
+        createMap(lang);
+      });
   });
 
   let series = seriesify(data, unitsHolder, lang);
