@@ -27,11 +27,10 @@ function addUpdated(lang) {
 
 function syncExtremes(e) {
   const thisChart = this.chart;
-
   if (e.trigger !== "syncExtremes") {
     // Prevent feedback loop
     Highcharts.charts.forEach((chart) => {
-      if (chart !== thisChart) {
+      if (chart !== thisChart && chart.options.chart.type !== "map") {
         if (chart.xAxis[0].setExtremes) {
           // It is null while updating
           chart.xAxis[0].setExtremes(e.min, e.max, undefined, false, {
