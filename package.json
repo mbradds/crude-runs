@@ -1,6 +1,6 @@
 {
   "name": "crude-runs-dashboard",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "sideEffects": false,
   "engines": {
     "node": "14.x",
