@@ -1,9 +1,13 @@
-const path = require("path");
-const { CleanWebpackPlugin } = require("clean-webpack-plugin");
-const CopyWebpackPlugin = require("copy-webpack-plugin");
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const HtmlWebpackPlugin = require("html-webpack-plugin");
-const htmlText = require("./src/htmlText");
+import path from "path";
+import { fileURLToPath } from "url";
+import { CleanWebpackPlugin } from "clean-webpack-plugin";
+import CopyWebpackPlugin from "copy-webpack-plugin";
+import MiniCssExtractPlugin from "mini-css-extract-plugin";
+import HtmlWebpackPlugin from "html-webpack-plugin";
+import { htmlText } from "./src/htmlText.js";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 // const BundleAnalyzerPlugin = require("webpack-bundle-analyzer")
 //   .BundleAnalyzerPlugin;
 // const webpack = require("webpack");
@@ -43,24 +47,14 @@ const pages = function switchLanguage() {
   return htmlPlugins;
 };
 
-module.exports = {
+export default {
   // mode: "development",
-  mode: "production",
+  // mode: "production",
   entry: { en: "./src/index_en.js", fr: "./src/index_fr.js" },
   output: {
     path: path.resolve(__dirname, "dist"),
     filename: "[name].[contenthash].js",
   },
-
-  devServer: {
-    index: "index_en.html",
-    compress: true,
-    contentBase: "./dist",
-    publicPath: "/",
-    hot: true,
-  },
-
-  devtool: false,
 
   plugins: [
     new CopyWebpackPlugin({
@@ -105,6 +99,7 @@ module.exports = {
         test: /\.css$/i,
         exclude: /node_modules/,
         use: [MiniCssExtractPlugin.loader, "css-loader"],
+        sideEffects: true,
       },
       {
         test: /\.hbs$/,

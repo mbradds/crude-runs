@@ -1,4 +1,4 @@
-const lang = {
+export const htmlText = {
   en: {
     h1: "Weekly Crude Run Summary and Data",
     mapHeader: "Crude Region Map",
@@ -68,5 +68,3 @@ const lang = {
     },
   },
 };
-
-module.exports = lang;

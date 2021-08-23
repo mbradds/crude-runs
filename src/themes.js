@@ -1,4 +1,4 @@
-import { cerPalette } from "./util";
+import { cerPalette } from "./util.js";
 
 export const generalTheme = (Highcharts) => {
   Highcharts.profiles = {

@@ -1,13 +1,14 @@
 import Highcharts from "highcharts";
-import MapModule from "highcharts/modules/map";
+import MapModule from "highcharts/modules/map.js";
 import map from "@highcharts/map-collection/countries/ca/ca-all.geo.json";
-import "core-js/modules/es.promise";
+import "core-js/modules/es.promise.js";
 import data from "./data_management/runs.json";
 import meta from "./data_management/meta.json";
-import { cerPalette } from "./util";
-import { generalTheme } from "./themes";
+import { cerPalette } from "./util.js";
+import { generalTheme } from "./themes.js";
 
-require("./main.css");
+import "./main.css";
+// require("./main.css");
 
 MapModule(Highcharts);
 generalTheme(Highcharts);
