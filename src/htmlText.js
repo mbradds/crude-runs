@@ -11,23 +11,23 @@ export const htmlText = {
       refineries. The crude oil is then processed into various refined
       products such as
       <i class="bg-info text-highlight"
-        >&nbsp;gasoline, diesel, and jet fuel&nbsp;</i
+        >gasoline, diesel, and jet fuel</i
       >. Manitoba, Nova Scotia, PEI, and the Territories do not have
       crude oil refineries.`,
       two: `Data is provided to the CER
       <i class="bg-info text-highlight"
-        >&nbsp;voluntarily by the refinery operators,&nbsp;</i
+        >voluntarily by the refinery operators,</i
       >
       and aggregated into three regions for confidentiality reasons.`,
       three: `<i class="bg-info text-highlight"
-      >&nbsp;Refining capacity is an estimate&nbsp;</i
+      >Refining capacity is an estimate</i
     >
     and fluctuates over time based on several factors such as the
     type of crude entering the refinery, and the desired refined
     product mix produced.`,
       four: `This dashboard is updated monthly. Please take a look at the
     <i class="bg-info text-highlight"
-      >&nbsp;data download options below&nbsp;</i
+      >data download options below</i
     >
     for the most recent data with additional metrics such as
     four-week average and year-to-date average.`,
@@ -46,20 +46,20 @@ export const htmlText = {
     whatP: {
       one: `La charge correspond au volume de pétrole brut traité par les raffineries. Le pétrole brut est transformé en divers produits raffinés comme
       <i class="bg-info text-highlight"
-        >&nbsp;l’essence, le diesel et le carburéacteur&nbsp;</i
+        >l’essence, le diesel et le carburéacteur</i
       >. Le Manitoba, la Nouvelle-Écosse, l’Île-du-Prince-Édouard et les territoires ne comptent aucune raffinerie.`,
       two: `Les données sont fournies volontairement à la Régie
       <i class="bg-info text-highlight"
-        >&nbsp;par les exploitants de raffineries&nbsp;</i
+        >par les exploitants de raffineries</i
       >
       et sont regroupées en trois régions pour des raisons de confidentialité.`,
       three: `<i class="bg-info text-highlight"
-      >&nbsp;La capacité de raffinage est une estimation&nbsp;</i
+      >La capacité de raffinage est une estimation</i
     >
     qui varie au fil du temps en fonction de plusieurs facteurs, comme le type de brut alimentant la raffinerie et le mélange de produits raffinés souhaité.`,
       four: `Ce tableau de bord est mis à jour tous les mois. Veuillez prendre connaissance
     <i class="bg-info text-highlight"
-      >&nbsp;des options de téléchargement de données&nbsp;</i
+      >des options de téléchargement de données</i
     >
     ci-dessous pour les données les plus récentes, avec des mesures supplémentaires comme la moyenne sur quatre semaines et la moyenne à ce jour.`,
     },
