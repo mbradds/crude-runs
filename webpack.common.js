@@ -48,8 +48,6 @@ const pages = function switchLanguage() {
 };
 
 export default {
-  // mode: "development",
-  // mode: "production",
   entry: { en: "./src/index_en.js", fr: "./src/index_fr.js" },
   output: {
     path: path.resolve(__dirname, "dist"),
@@ -62,10 +60,6 @@ export default {
         {
           from: path.resolve(__dirname, "src", "GCWeb"),
           to: path.resolve(__dirname, "dist", "GCWeb"),
-        },
-        {
-          from: path.resolve(__dirname, "src", "wet-boew"),
-          to: path.resolve(__dirname, "dist", "wet-boew"),
         },
       ],
     }),

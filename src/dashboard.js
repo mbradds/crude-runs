@@ -6,9 +6,7 @@ import data from "./data_management/runs.json";
 import meta from "./data_management/meta.json";
 import { cerPalette } from "./util.js";
 import { generalTheme } from "./themes.js";
-
 import "./main.css";
-// require("./main.css");
 
 MapModule(Highcharts);
 generalTheme(Highcharts);
@@ -244,14 +242,12 @@ function regionChartTooltip(event, units, langTool) {
   const utilization = ((event.points[0].y / event.points[1].y) * 100).toFixed(
     0
   );
-  let table = `<table>`;
-  table += `<caption style="padding:0px; padding-bottom:5px">${dateFormat(
+  let table = `<table><caption style="padding:0px; padding-bottom:5px">${dateFormat(
     event.x
   )}</caption>`;
   table += `<tr><td>${langTool.runs}&nbsp</td><td><strong>${event.points[0].y}&nbsp${units.label}</strong></td>`;
   table += `<tr><td>${langTool.cap}&nbsp</td><td><strong>${event.points[1].y}&nbsp${units.label}<strong></td>`;
-  table += `<tr style="border-top: 1px solid grey"><td>${langTool.util}&nbsp</td><td><strong>${utilization}&nbsp%<strong></td>`;
-  table += `</table>`;
+  table += `<tr style="border-top: 1px solid grey"><td>${langTool.util}&nbsp</td><td><strong>${utilization}&nbsp%<strong></td></table>`;
   return table;
 }
 

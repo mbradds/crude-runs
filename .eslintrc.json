@@ -13,7 +13,14 @@
     "max-classes-per-file": "off",
     "no-underscore-dangle": "warn",
     "new-cap": "warn",
+    "no-param-reassign": ["error", { "props": false }],
     "no-irregular-whitespace": "warn",
-    "import/extensions": "never"
+    "import/extensions": [
+      "error",
+      {
+        "js": "always",
+        "json": "always"
+      }
+    ]
   }
 }
