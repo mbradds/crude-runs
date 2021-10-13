@@ -52,19 +52,23 @@ These instructions are for English, but the French instructions will be the same
 `/dist/index_en.html` contains new HTML for the crude-runs dashboard. The old HTML can be deleted and replaced with the new HTML. Only the html specific to the dashboard should be deleted and replaced (approximately line 34-119 in `/dist/index_en.html`)
 
 ```diff
+<!-- start crude runs dashboard -->
 -<div class="row mrgn-tp-lg" id="runs-intro">
 - <html content here>
 -</div>
 -<div class="row">
 -  <html content here>
 -</div>
+<!-- end crude runs dashboard -->
 
+<!-- start crude runs dashboard -->
 +<div class="row mrgn-tp-lg" id="runs-intro">
 + <html content here>
 +</div>
 +<div class="row">
 +  <html content here>
 +</div>
+<!-- end crude runs dashboard -->
 ```
 
 6. Publish to tweb and send the links to grant.moss@cer-rec.gc.ca

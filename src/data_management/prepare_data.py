@@ -1,14 +1,23 @@
-import pandas as pd
 import os
 import ssl
 from datetime import date
 import json
+import pandas as pd
 ssl._create_default_https_context = ssl._create_unverified_context
 script_dir = os.path.dirname(__file__)
 
 
 def get_data():
-    link = "https://www.cer-rec.gc.ca/en/data-analysis/energy-commodities/crude-oil-petroleum-products/statistics/crdrn-hstrcl.xlsx"
+    
+    # get the existing local data for last date comparison
+    if os.path.isfile("./runs.json"):
+        current = pd.read_json("./runs.json", convert_dates=["d"])
+        current["d"] = pd.to_datetime(current["d"])
+        data_up_to = max(current["d"])
+    else:
+        data_up_to = False
+    
+    link = "https://www.cer-rec.gc.ca/en/data-analysis/energy-commodities/crude-oil-petroleum-products/statistics/weekly-crude-run-summary-data/historical-weekly-crude-run-data-donnees-sur-les-charges-hebdomadaires-historiques.xlsx"
     df = pd.read_excel(link, engine="openpyxl")
     cols = list(df.columns)
     df = df[~df[cols[1]].isnull()]
@@ -17,7 +26,7 @@ def get_data():
     df = df[1:]
     df.columns = new_header
     for col in df.columns:
-        if col == "nan" or col == "NaT":
+        if col in ["nan", "NaT"]:
             try:
                 del df[col]
             except:
@@ -35,6 +44,16 @@ def get_data():
         df[num] = pd.to_numeric(df[num])
 
     df['Week End'] = pd.to_datetime(df['Week End'])
+    
+    if data_up_to:
+        if data_up_to < max(df["Week End"]):
+            print("There is new crude runs data!")
+        else:
+            print("No new crude runs data")
+    else:
+        print("No local data...")
+        
+    
     df['% of capacity'] = [x/100 for x in df['% of capacity']]
     df['c'] = [r/p for r, p in zip(df['Runs for the week'],
                                    df['% of capacity'])]
@@ -71,5 +90,5 @@ def get_data():
 if __name__ == "__main__":
     print('starting crude runs data update...')
     # links = orca_regdocs_links(True)
-    df = get_data()
+    df_ = get_data()
     print('completed data update!')

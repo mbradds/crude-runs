@@ -261,11 +261,9 @@ function createRegionChart(series, maxY, units, lang) {
     title: {
       text: "",
     },
-
     credits: {
       text: "",
     },
-
     xAxis: {
       type: "datetime",
       crosshair: true,
@@ -273,7 +271,6 @@ function createRegionChart(series, maxY, units, lang) {
         setExtremes: syncExtremes,
       },
     },
-
     plotOptions: {
       line: {
         lineWidth: 3,
@@ -286,11 +283,9 @@ function createRegionChart(series, maxY, units, lang) {
         },
       },
     },
-
     legend: {
       margin: 5,
     },
-
     yAxis: {
       max: maxY,
       title: {
@@ -299,7 +294,6 @@ function createRegionChart(series, maxY, units, lang) {
       tickAmount: 5,
       endOnTick: false,
     },
-
     tooltip: {
       shared: true,
       useHTML: true,
@@ -308,7 +302,6 @@ function createRegionChart(series, maxY, units, lang) {
         return regionChartTooltip(this, units, lang.toolTip);
       },
     },
-
     series: series.data,
   });
 }
@@ -406,8 +399,7 @@ export function mainCrudeRuns(lang, languageTheme = false) {
   // user selects units
   document.getElementById("radio-units").addEventListener("click", (event) => {
     if (event.target && event.target.value) {
-      const radioValue = event.target.value;
-      unitsHolder.current = radioValue;
+      unitsHolder.current = event.target.value;
       unitsHolder.label = unitsLabel(unitsHolder, lang);
       series = seriesify(data, unitsHolder, lang);
       updateRegionChart(westChart, series, "west", unitsHolder);
