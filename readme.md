@@ -49,7 +49,7 @@ Inside `weekly-crude-run-summary-data.html` the script tags need to be updated t
 
 These instructions are for English, but the French instructions will be the same for the French file locations.
 
-`/dist/index_en.html` contains new HTML for the crude-runs dashboard. The old HTML can be deleted and replaced with the new HTML. Only the html specific to the dashboard should be deleted and replaced (approximately line 34-119 in `/dist/index_en.html`)
+`/dist/index_en.html` contains new HTML for the crude-runs dashboard. The old HTML can be deleted and replaced with the new HTML. Only the html specific to the dashboard should be deleted and replaced (everything in between the start and end dashboard comments, approximately line 34-121 in `/dist/index_en.html`)
 
 ```diff
 <!-- start crude runs dashboard -->
