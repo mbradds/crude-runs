@@ -4,11 +4,15 @@ from datetime import date
 import json
 import pandas as pd
 ssl._create_default_https_context = ssl._create_unverified_context
-script_dir = os.path.dirname(__file__)
+
+
+def set_cwd_to_script():
+    dname = os.path.dirname(os.path.abspath(__file__))
+    os.chdir(dname)
 
 
 def get_data():
-    
+
     # get the existing local data for last date comparison
     if os.path.isfile("./runs.json"):
         current = pd.read_json("./runs.json", convert_dates=["d"])
@@ -16,7 +20,7 @@ def get_data():
         data_up_to = max(current["d"])
     else:
         data_up_to = False
-    
+
     link = "https://www.cer-rec.gc.ca/en/data-analysis/energy-commodities/crude-oil-petroleum-products/statistics/weekly-crude-run-summary-data/historical-weekly-crude-run-data-donnees-sur-les-charges-hebdomadaires-historiques.xlsx"
     df = pd.read_excel(link, engine="openpyxl")
     cols = list(df.columns)
@@ -44,7 +48,7 @@ def get_data():
         df[num] = pd.to_numeric(df[num])
 
     df['Week End'] = pd.to_datetime(df['Week End'])
-    
+
     if data_up_to:
         if data_up_to < max(df["Week End"]):
             print("There is new crude runs data!")
@@ -52,8 +56,8 @@ def get_data():
             print("No new crude runs data")
     else:
         print("No local data...")
-        
-    
+
+
     df['% of capacity'] = [x/100 for x in df['% of capacity']]
     df['c'] = [r/p for r, p in zip(df['Runs for the week'],
                                    df['% of capacity'])]
@@ -88,6 +92,7 @@ def get_data():
 
 
 if __name__ == "__main__":
+    set_cwd_to_script()
     print('starting crude runs data update...')
     # links = orca_regdocs_links(True)
     df_ = get_data()
