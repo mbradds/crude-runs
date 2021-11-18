@@ -2,8 +2,6 @@ import Highcharts from "highcharts";
 import MapModule from "highcharts/modules/map.js";
 import map from "@highcharts/map-collection/countries/ca/ca-all.geo.json";
 import "core-js/modules/es.promise.js";
-import runsData from "./data_management/runs.json";
-// import meta from "./data_management/meta.json";
 import { cerPalette } from "./util.js";
 import { generalTheme } from "./themes.js";
 import "./main.css";
@@ -11,7 +9,7 @@ import "./main.css";
 MapModule(Highcharts);
 generalTheme(Highcharts);
 
-function addUpdated(lang) {
+function addUpdated(runsData, lang) {
   const lastUpdated = runsData.updated;
   const now = new Date(lastUpdated[0], lastUpdated[1], lastUpdated[2]);
   const nowString = Highcharts.dateFormat("%b %d, %Y", now);
@@ -370,25 +368,22 @@ export function equalizeHeight(divId1, divId2) {
   }
 }
 
-export function mainCrudeRuns(lang, languageTheme = false) {
+export function buildDashboard(runsData, lang, languageTheme) {
   if (languageTheme) {
     languageTheme(Highcharts);
   }
-  addUpdated(lang);
+  addUpdated(runsData, lang);
   const unitsHolder = { current: "b/d", base: "b/d" };
   unitsHolder.label = unitsLabel(unitsHolder, lang);
 
-  // equalize heights after map is loaded and dom is ready
-  window.addEventListener("DOMContentLoaded", () => {
-    createMap(lang)
-      .then(() => {
-        equalizeHeight("eq-ht-1", "eq-ht-2");
-      })
-      .catch((e) => {
-        console.log("map promise error", e);
-        createMap(lang);
-      });
-  });
+  createMap(lang)
+    .then(() => {
+      equalizeHeight("eq-ht-1", "eq-ht-2");
+    })
+    .catch((e) => {
+      console.log("map promise error", e);
+      createMap(lang);
+    });
 
   const chartData = JSON.parse(runsData.data);
   let series = seriesify(chartData, unitsHolder, lang);
@@ -409,4 +404,27 @@ export function mainCrudeRuns(lang, languageTheme = false) {
       updateRegionChart(quebecChart, series, "quebec", unitsHolder);
     }
   });
+}
+
+async function fetchErrorBackup(lang, languageTheme) {
+  const { default: runsData } = await import("./data_management/runs.json");
+  return buildDashboard(runsData, lang, languageTheme);
+}
+
+export function mainCrudeRuns(lang, languageTheme = false) {
+  fetch("https://cer.blob.core.windows.net/crude-run-data/runs.json")
+    .then((response) => {
+      if (response.ok) {
+        return response.json();
+      }
+      console.log("fetch error");
+      return fetchErrorBackup(lang, languageTheme);
+    })
+    .then((data) => {
+      buildDashboard(data, lang, languageTheme);
+    })
+    .catch((error) => {
+      console.log(error);
+      fetchErrorBackup(lang, languageTheme);
+    });
 }
