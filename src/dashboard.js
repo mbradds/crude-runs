@@ -370,6 +370,10 @@ function displayErrorMsg(lang) {
   <h3>${lang.error.header}</h3>${lang.error.message}</section>`;
 }
 
+function removeSpinningLoader(divId) {
+  document.getElementById(divId).style.display = "none";
+}
+
 export function buildDashboard(runsData, lang, languageTheme) {
   if (languageTheme) {
     languageTheme(Highcharts);
@@ -380,10 +384,12 @@ export function buildDashboard(runsData, lang, languageTheme) {
 
   createMap(lang)
     .then(() => {
+      removeSpinningLoader("map-loader");
       equalizeHeight("eq-ht-1", "eq-ht-2");
     })
     .catch((e) => {
-      console.log("map promise error", e);
+      console.warn(e);
+      removeSpinningLoader("map-loader");
       createMap(lang);
     });
 
@@ -408,15 +414,8 @@ export function buildDashboard(runsData, lang, languageTheme) {
   });
 }
 
-function removeSpinningLoader(divId = "loader") {
-  Array.from(document.getElementsByClassName(divId)).forEach((div) => {
-    const divToHide = div;
-    divToHide.style.display = "none";
-  });
-}
-
 async function fetchErrorBackup(lang, languageTheme) {
-  removeSpinningLoader();
+  removeSpinningLoader("chart-loader");
   try {
     const { default: runsData } = await import(
       /* webpackChunkName: "backupData" */ "./data_management/runs.json"
@@ -437,7 +436,7 @@ export function mainCrudeRuns(lang, languageTheme = false) {
       return fetchErrorBackup(lang, languageTheme);
     })
     .then((data) => {
-      removeSpinningLoader();
+      removeSpinningLoader("chart-loader");
       buildDashboard(data, lang, languageTheme);
     })
     .catch((error) => {
