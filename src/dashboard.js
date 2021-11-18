@@ -4,7 +4,7 @@ import map from "@highcharts/map-collection/countries/ca/ca-all.geo.json";
 import "core-js/modules/es.promise.js";
 import { cerPalette } from "./util.js";
 import { generalTheme } from "./themes.js";
-import "./main.css";
+import "./css/main.css";
 
 MapModule(Highcharts);
 generalTheme(Highcharts);
@@ -12,14 +12,11 @@ generalTheme(Highcharts);
 function addUpdated(runsData, lang) {
   const lastUpdated = runsData.updated;
   const now = new Date(lastUpdated[0], lastUpdated[1], lastUpdated[2]);
-  const nowString = Highcharts.dateFormat("%b %d, %Y", now);
-
   const next = new Date(now.setMonth(now.getMonth() + 1));
-  const nextString = Highcharts.dateFormat("%b %Y", next);
 
   document.getElementById("updated").innerHTML = lang.updated(
-    nowString,
-    nextString
+    Highcharts.dateFormat("%b %d, %Y", now),
+    Highcharts.dateFormat("%b %Y", next)
   );
 }
 
@@ -234,14 +231,12 @@ function seriesify(runData, unitsHolder, lang) {
   return { west, ontario, quebec, maxValue };
 }
 
-const dateFormat = (value, format = "%b %d, %Y") =>
-  Highcharts.dateFormat(format, value);
-
 function regionChartTooltip(event, units, langTool) {
   const utilization = ((event.points[0].y / event.points[1].y) * 100).toFixed(
     0
   );
-  let table = `<table><caption style="padding:0px; padding-bottom:5px">${dateFormat(
+  let table = `<table><caption style="padding:0px; padding-bottom:5px">${Highcharts.dateFormat(
+    "%b %d, %Y",
     event.x
   )}</caption>`;
   table += `<tr><td>${langTool.runs}&nbsp</td><td><strong>${event.points[0].y}&nbsp${units.label}</strong></td>`;
@@ -368,6 +363,13 @@ export function equalizeHeight(divId1, divId2) {
   }
 }
 
+function displayErrorMsg(lang) {
+  document.getElementById(
+    "complete-dashboard"
+  ).innerHTML = `<section class="alert alert-danger">
+  <h3>${lang.error.header}</h3>${lang.error.message}</section>`;
+}
+
 export function buildDashboard(runsData, lang, languageTheme) {
   if (languageTheme) {
     languageTheme(Highcharts);
@@ -406,9 +408,24 @@ export function buildDashboard(runsData, lang, languageTheme) {
   });
 }
 
+function removeSpinningLoader(divId = "loader") {
+  Array.from(document.getElementsByClassName(divId)).forEach((div) => {
+    const divToHide = div;
+    divToHide.style.display = "none";
+  });
+}
+
 async function fetchErrorBackup(lang, languageTheme) {
-  const { default: runsData } = await import("./data_management/runs.json");
-  return buildDashboard(runsData, lang, languageTheme);
+  removeSpinningLoader();
+  try {
+    const { default: runsData } = await import(
+      /* webpackChunkName: "backupData" */ "./data_management/runs.json"
+    );
+    return buildDashboard(runsData, lang, languageTheme);
+  } catch (err) {
+    console.warn(err);
+    return displayErrorMsg(lang);
+  }
 }
 
 export function mainCrudeRuns(lang, languageTheme = false) {
@@ -417,14 +434,14 @@ export function mainCrudeRuns(lang, languageTheme = false) {
       if (response.ok) {
         return response.json();
       }
-      console.log("fetch error");
       return fetchErrorBackup(lang, languageTheme);
     })
     .then((data) => {
+      removeSpinningLoader();
       buildDashboard(data, lang, languageTheme);
     })
     .catch((error) => {
-      console.log(error);
+      console.warn(error);
       fetchErrorBackup(lang, languageTheme);
     });
 }

@@ -3,18 +3,18 @@
   "env": {
     "browser": true
   },
-  "globals": {
-    "Highcharts": true,
-    "L": true
+  "parserOptions": {
+    "ecmaVersion": 2020,
+    "sourceType": "module",
+    "allowImportExportEverywhere": true
   },
   "rules": {
     "import/prefer-default-export": "off",
     "no-nested-ternary": "off",
-    "max-classes-per-file": "off",
     "no-underscore-dangle": "warn",
     "new-cap": "warn",
+    "prefer-destructuring": ["warn", { "object": true, "array": true }],
     "no-param-reassign": ["error", { "props": false }],
-    "no-irregular-whitespace": "warn",
     "import/extensions": [
       "error",
       {
@@ -22,10 +22,5 @@
         "json": "always"
       }
     ]
-  },
-  "parser": "babel-eslint",
-  "parserOptions": {
-    "sourceType": "module",
-    "allowImportExportEverywhere": true
   }
 }

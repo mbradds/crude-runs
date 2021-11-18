@@ -17,6 +17,7 @@ export const lang = {
     numberFormat: { seperator: " ", decimal: "." },
     updated: (now, next) =>
       `Chart data updated on <strong>${now}</strong>. Next update: second week of <strong>${next}</strong>.`,
+    error: { header: "Chart Error", message: "Please try again later." },
   },
   fr: {
     units: { imperial: "milliers de b/j", metric: "milliers de m3/j" },
@@ -36,5 +37,9 @@ export const lang = {
     numberFormat: { seperator: " ", decimal: "," },
     updated: (now, next) =>
       `Données des graphiques mises à jour le <strong>${now}</strong>. Prochaine mise à jour : seconde semaine de <strong>${next}</strong>.`,
+    error: {
+      header: "Erreur de graphique",
+      message: "Veuillez réessayer plus tard.",
+    },
   },
 };

@@ -1,7 +1,4 @@
-/* body {
-  font-size: 20px;
-  line-height: 1.65em;
-} */
+@import url("loader.css");
 
 .dashboard-style {
   font-size: 16px !important;
@@ -16,6 +13,13 @@
   font-style: normal;
   font-weight: bold;
 }
+
+.sync-charts {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 /* small screen */
 @media only screen and (max-height: 900px), screen and (max-width: 1440px) {
   .runs-chart {
