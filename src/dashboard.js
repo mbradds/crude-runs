@@ -2,25 +2,21 @@ import Highcharts from "highcharts";
 import MapModule from "highcharts/modules/map.js";
 import map from "@highcharts/map-collection/countries/ca/ca-all.geo.json";
 import "core-js/modules/es.promise.js";
-import data from "./data_management/runs.json";
-import meta from "./data_management/meta.json";
 import { cerPalette } from "./util.js";
 import { generalTheme } from "./themes.js";
-import "./main.css";
+import "./css/main.css";
 
 MapModule(Highcharts);
 generalTheme(Highcharts);
 
-function addUpdated(lang) {
-  const now = new Date(meta.updated[0], meta.updated[1], meta.updated[2]);
-  const nowString = Highcharts.dateFormat("%b %d, %Y", now);
-
+function addUpdated(runsData, lang) {
+  const lastUpdated = runsData.updated;
+  const now = new Date(lastUpdated[0], lastUpdated[1], lastUpdated[2]);
   const next = new Date(now.setMonth(now.getMonth() + 1));
-  const nextString = Highcharts.dateFormat("%b %Y", next);
 
   document.getElementById("updated").innerHTML = lang.updated(
-    nowString,
-    nextString
+    Highcharts.dateFormat("%b %d, %Y", now),
+    Highcharts.dateFormat("%b %Y", next)
   );
 }
 
@@ -235,14 +231,12 @@ function seriesify(runData, unitsHolder, lang) {
   return { west, ontario, quebec, maxValue };
 }
 
-const dateFormat = (value, format = "%b %d, %Y") =>
-  Highcharts.dateFormat(format, value);
-
 function regionChartTooltip(event, units, langTool) {
   const utilization = ((event.points[0].y / event.points[1].y) * 100).toFixed(
     0
   );
-  let table = `<table><caption style="padding:0px; padding-bottom:5px">${dateFormat(
+  let table = `<table><caption style="padding:0px; padding-bottom:5px">${Highcharts.dateFormat(
+    "%b %d, %Y",
     event.x
   )}</caption>`;
   table += `<tr><td>${langTool.runs}&nbsp</td><td><strong>${event.points[0].y}&nbsp${units.label}</strong></td>`;
@@ -369,27 +363,32 @@ export function equalizeHeight(divId1, divId2) {
   }
 }
 
-export function mainCrudeRuns(lang, languageTheme = false) {
+function displayErrorMsg(lang) {
+  document.getElementById(
+    "complete-dashboard"
+  ).innerHTML = `<section class="alert alert-danger">
+  <h3>${lang.error.header}</h3>${lang.error.message}</section>`;
+}
+
+export function buildDashboard(runsData, lang, languageTheme) {
   if (languageTheme) {
     languageTheme(Highcharts);
   }
-  addUpdated(lang);
+  addUpdated(runsData, lang);
   const unitsHolder = { current: "b/d", base: "b/d" };
   unitsHolder.label = unitsLabel(unitsHolder, lang);
 
-  // equalize heights after map is loaded and dom is ready
-  window.addEventListener("DOMContentLoaded", () => {
-    createMap(lang)
-      .then(() => {
-        equalizeHeight("eq-ht-1", "eq-ht-2");
-      })
-      .catch((e) => {
-        console.log("map promise error", e);
-        createMap(lang);
-      });
-  });
+  createMap(lang)
+    .then(() => {
+      equalizeHeight("eq-ht-1", "eq-ht-2");
+    })
+    .catch((e) => {
+      console.log("map promise error", e);
+      createMap(lang);
+    });
 
-  let series = seriesify(data, unitsHolder, lang);
+  const chartData = JSON.parse(runsData.data);
+  let series = seriesify(chartData, unitsHolder, lang);
   const [westChart, ontarioChart, quebecChart] = buildAllRunCharts(
     series,
     unitsHolder,
@@ -401,10 +400,48 @@ export function mainCrudeRuns(lang, languageTheme = false) {
     if (event.target && event.target.value) {
       unitsHolder.current = event.target.value;
       unitsHolder.label = unitsLabel(unitsHolder, lang);
-      series = seriesify(data, unitsHolder, lang);
+      series = seriesify(chartData, unitsHolder, lang);
       updateRegionChart(westChart, series, "west", unitsHolder);
       updateRegionChart(ontarioChart, series, "ontario", unitsHolder);
       updateRegionChart(quebecChart, series, "quebec", unitsHolder);
     }
   });
+}
+
+function removeSpinningLoader(divId = "loader") {
+  Array.from(document.getElementsByClassName(divId)).forEach((div) => {
+    const divToHide = div;
+    divToHide.style.display = "none";
+  });
+}
+
+async function fetchErrorBackup(lang, languageTheme) {
+  removeSpinningLoader();
+  try {
+    const { default: runsData } = await import(
+      /* webpackChunkName: "backupData" */ "./data_management/runs.json"
+    );
+    return buildDashboard(runsData, lang, languageTheme);
+  } catch (err) {
+    console.warn(err);
+    return displayErrorMsg(lang);
+  }
+}
+
+export function mainCrudeRuns(lang, languageTheme = false) {
+  fetch("https://cer.blob.core.windows.net/crude-run-data/runs.json")
+    .then((response) => {
+      if (response.ok) {
+        return response.json();
+      }
+      return fetchErrorBackup(lang, languageTheme);
+    })
+    .then((data) => {
+      removeSpinningLoader();
+      buildDashboard(data, lang, languageTheme);
+    })
+    .catch((error) => {
+      console.warn(error);
+      fetchErrorBackup(lang, languageTheme);
+    });
 }

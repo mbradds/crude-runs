@@ -43,91 +43,94 @@
         </div>
       </div>
       <!-- start crude runs dashboard -->
-      <div class="row mrgn-tp-lg" id="runs-intro">
-        <div class="col-md-6">
-          <section class="panel panel-default runs-panel" id="eq-ht-1">
-            <header class="panel-heading">
-              <h5 class="panel-title">{{htmlWebpackPlugin.options.page.text.mapHeader}}</h5>
-            </header>
-            <div class="panel-body">
-              <div id="canada-map"></div>
-            </div>
-          </section>
+      <div id="complete-dashboard">
+        <div class="row mrgn-tp-lg" id="runs-intro">
+          <div class="col-md-6">
+            <section class="panel panel-default runs-panel" id="eq-ht-1">
+              <header class="panel-heading">
+                <h5 class="panel-title">{{htmlWebpackPlugin.options.page.text.mapHeader}}</h5>
+              </header>
+              <div class="panel-body">
+                <div id="canada-map"></div>
+              </div>
+            </section>
+          </div>
+          <div class="col-md-6">
+            <section class="panel panel-default runs-panel" id="eq-ht-2">
+              <header class="panel-heading">
+                <h5 class="panel-title">{{htmlWebpackPlugin.options.page.text.whatHeader}}</h5>
+              </header>
+              <div class="panel-body dashboard-style">
+                <p>
+                  {{htmlWebpackPlugin.options.page.text.whatP.one}}
+                </p>
+                <p>
+                  {{htmlWebpackPlugin.options.page.text.whatP.two}}
+                </p>
+                <p>
+                  {{htmlWebpackPlugin.options.page.text.whatP.three}}
+                </p>
+                <p>
+                  {{htmlWebpackPlugin.options.page.text.whatP.four}}
+                </p>
+              </div>
+            </section>
+          </div>
         </div>
-        <div class="col-md-6">
-          <section class="panel panel-default runs-panel" id="eq-ht-2">
-            <header class="panel-heading">
-              <h5 class="panel-title">{{htmlWebpackPlugin.options.page.text.whatHeader}}</h5>
-            </header>
-            <div class="panel-body dashboard-style">
-              <p>
-                {{htmlWebpackPlugin.options.page.text.whatP.one}}
-              </p>
-              <p>
-                {{htmlWebpackPlugin.options.page.text.whatP.two}}
-              </p>
-              <p>
-                {{htmlWebpackPlugin.options.page.text.whatP.three}}
-              </p>
-              <p>
-                {{htmlWebpackPlugin.options.page.text.whatP.four}}
-              </p>
-            </div>
-          </section>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-md-12">
-          <section class="panel panel-default">
-            <header class="panel-heading dashboard-style">
-              <div class="chart-header">
-                <h5 class="panel-title" id="chart-title">
-                  {{htmlWebpackPlugin.options.page.text.chartHeader}}
-                </h5>
-                <div id="radio-units" class="radio-inline pull-right">
-                  <form>
-                    <label for="crude-runs-bbl-btn" class="radio-inline">
-                      <input
-                        id="crude-runs-bbl-btn"
-                        type="radio"
-                        name="type"
-                        value="b/d"
-                        checked="checked"
-                      />
-                      {{htmlWebpackPlugin.options.page.text.units.imperial}}</label
-                    >
-                    <label for="crude-runs-m3-btn" class="radio-inline">
-                      <input
-                        id="crude-runs-m3-btn"
-                        type="radio"
-                        name="type"
-                        value="m3/d"
-                      />
-                      {{htmlWebpackPlugin.options.page.text.units.metric}}</label
-                    >
-                  </form>
+        <div class="row">
+          <div class="col-md-12">
+            <section class="panel panel-default">
+              <header class="panel-heading dashboard-style">
+                <div class="chart-header">
+                  <h5 class="panel-title" id="chart-title">
+                    {{htmlWebpackPlugin.options.page.text.chartHeader}}
+                  </h5>
+                  <div id="radio-units" class="radio-inline pull-right">
+                    <form>
+                      <label for="crude-runs-bbl-btn" class="radio-inline">
+                        <input
+                          id="crude-runs-bbl-btn"
+                          type="radio"
+                          name="type"
+                          value="b/d"
+                          checked="checked"
+                        />
+                        {{htmlWebpackPlugin.options.page.text.units.imperial}}</label
+                      >
+                      <label for="crude-runs-m3-btn" class="radio-inline">
+                        <input
+                          id="crude-runs-m3-btn"
+                          type="radio"
+                          name="type"
+                          value="m3/d"
+                        />
+                        {{htmlWebpackPlugin.options.page.text.units.metric}}</label
+                      >
+                    </form>
+                  </div>
+                </div>
+              </header>
+              <div class="panel-body">
+                <div id="sync-charts">
+                  <div class="loader"></div>
+                  <div class="runs-chart" id="runs-west"></div>
+                  <div class="runs-chart" id="runs-ontario"></div>
+                  <div class="runs-chart" id="runs-quebec"></div>
                 </div>
               </div>
-            </header>
-            <div class="panel-body">
-              <div id="sync-charts">
-                <div class="runs-chart" id="runs-west"></div>
-                <div class="runs-chart" id="runs-ontario"></div>
-                <div class="runs-chart" id="runs-quebec"></div>
-              </div>
-            </div>
-            <footer class="panel-footer">
-              <div class="dashboard-style" id="updated"></div>
-            </footer>
-          </section>
-        </div>
-        <div class="col-md-12">
-          <details class="mrgn-bttm-lg">
-            <summary>{{htmlWebpackPlugin.options.page.text.instructionsHeader}}</summary>
-            <p>
-              {{htmlWebpackPlugin.options.page.text.instructionsP.one}}
-            </p>
-          </details>
+              <footer class="panel-footer">
+                <div class="dashboard-style" id="updated"></div>
+              </footer>
+            </section>
+          </div>
+          <div class="col-md-12">
+            <details class="mrgn-bttm-lg">
+              <summary>{{htmlWebpackPlugin.options.page.text.instructionsHeader}}</summary>
+              <p>
+                {{htmlWebpackPlugin.options.page.text.instructionsP.one}}
+              </p>
+            </details>
+          </div>
         </div>
       </div>
       <!-- end crude runs dashboard -->

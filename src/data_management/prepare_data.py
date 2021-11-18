@@ -3,6 +3,8 @@ import ssl
 from datetime import date
 import json
 import pandas as pd
+from azure.storage.blob import BlobServiceClient, BlobClient, ContainerClient
+from azure.core.exceptions import ResourceExistsError
 ssl._create_default_https_context = ssl._create_unverified_context
 
 
@@ -11,11 +13,27 @@ def set_cwd_to_script():
     os.chdir(dname)
 
 
-def get_data():
+def upload_crude_run_blob(file_name, container_name="crude-run-data"):
+    key = json.load(open("AZURE_STORAGE_CONNECTION_STRING.json"))
+    connect_str = key["AZURE_STORAGE_CONNECTION_STRING"]
+    blob_service_client = BlobServiceClient.from_connection_string(connect_str)
+    try:
+        container_client = blob_service_client.create_container(container_name)
+    except ResourceExistsError:
+        container_client = blob_service_client.get_container_client(container_name)
 
+    print("starting blob upload...")
+    with open("./"+file_name, "rb") as data:
+        blob_client = container_client.upload_blob(name=file_name, data=data, overwrite=True)
+    print("completed blob upload")
+    return connect_str
+
+
+def get_data(file_name):
     # get the existing local data for last date comparison
-    if os.path.isfile("./runs.json"):
-        current = pd.read_json("./runs.json", convert_dates=["d"])
+    if os.path.isfile("./"+file_name):
+        current = json.load(open(file_name))
+        current = pd.read_json(current["data"], convert_dates=["d"])
         current["d"] = pd.to_datetime(current["d"])
         data_up_to = max(current["d"])
     else:
@@ -51,10 +69,13 @@ def get_data():
 
     if data_up_to:
         if data_up_to < max(df["Week End"]):
+            upload_blob = True
             print("There is new crude runs data!")
         else:
+            upload_blob = False
             print("No new crude runs data")
     else:
+        upload_blob = False
         print("No local data...")
 
 
@@ -80,20 +101,21 @@ def get_data():
     del df["w"]
     del df["t"]
     df = df.sort_values(by="d")
-    df.to_json('runs.json', orient='records')
 
-    meta = {}
-    today = date.today()
-    meta['updated'] = [today.year, today.month-1, today.day]
-    with open('meta.json', 'w') as fp:
-        json.dump(meta, fp)
+    if upload_blob:
+        today = date.today()
+        blob = {"data": df.to_json(orient="records"),
+                "updated": [today.year, today.month-1, today.day]}
 
-    return df
+        with open(file_name, 'w') as fp:
+            json.dump(blob, fp)
+        upload_crude_run_blob(file_name)
 
 
 if __name__ == "__main__":
+    file_name = "runs.json"
     set_cwd_to_script()
     print('starting crude runs data update...')
-    # links = orca_regdocs_links(True)
-    df_ = get_data()
+    # key = upload_crude_run_blob()
+    df_ = get_data(file_name)
     print('completed data update!')
