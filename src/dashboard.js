@@ -2,6 +2,7 @@ import Highcharts from "highcharts";
 import MapModule from "highcharts/modules/map.js";
 import map from "@highcharts/map-collection/countries/ca/ca-all.geo.json";
 import "core-js/modules/es.promise.js";
+import "whatwg-fetch";
 import { cerPalette } from "./util.js";
 import { generalTheme } from "./themes.js";
 import "./css/main.css";
