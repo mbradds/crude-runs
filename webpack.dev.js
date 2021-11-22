@@ -8,7 +8,7 @@ export default merge(common, {
 
   devServer: {
     devMiddleware: {
-      index: "index_en.html",
+      index: "index.html",
     },
     client: {
       overlay: {

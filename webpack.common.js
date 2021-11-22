@@ -18,16 +18,18 @@ const pages = function switchLanguage() {
   const htmlPlugins = [];
   language.forEach((lang) => {
     const pageData = {};
+    let indexFileName = "index.html";
     if (lang === "en") {
       pageData.lang = { en: true, fr: false };
     } else if (lang === "fr") {
       pageData.lang = { en: false, fr: true };
+      indexFileName = `index_${lang}.html`;
     }
     pageData.text = htmlText[lang];
     htmlPlugins.push(
       new HtmlWebpackPlugin({
         page: JSON.parse(JSON.stringify(pageData)),
-        filename: `index_${lang}.html`,
+        filename: indexFileName,
         chunks: [`${lang}`],
         chunksSortMode: "auto",
         template: "src/components/index.hbs",
