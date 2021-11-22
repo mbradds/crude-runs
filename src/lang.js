@@ -18,6 +18,8 @@ export const lang = {
     updated: (now, next) =>
       `Chart data updated on <strong>${now}</strong>. Next update: second week of <strong>${next}</strong>.`,
     error: { header: "Chart Error", message: "Please try again later." },
+    outOfDate:
+      "The data in this dashboard may be out of date. Please check back later.",
   },
   fr: {
     units: { imperial: "milliers de b/j", metric: "milliers de m3/j" },
@@ -36,10 +38,12 @@ export const lang = {
     refineries: "raffineries",
     numberFormat: { seperator: " ", decimal: "," },
     updated: (now, next) =>
-      `Données des graphiques mises à jour le <strong>${now}</strong>. Prochaine mise à jour : seconde semaine de <strong>${next}</strong>.`,
+      `Données des graphiques mises à jour le <strong>${now}</strong>. Prochaine mise à jour : seconde semaine de <strong>${next}</strong>.`,
     error: {
       header: "Erreur de graphique",
       message: "Veuillez réessayer plus tard.",
     },
+    outOfDate:
+      "Les données de ce tableau de bord peuvent être obsolètes. Veuillez vérifier plus tard.",
   },
 };

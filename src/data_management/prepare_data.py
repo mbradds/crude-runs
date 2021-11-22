@@ -75,7 +75,7 @@ def get_data(file_name):
             upload_blob = False
             print("No new crude runs data")
     else:
-        upload_blob = False
+        upload_blob = True
         print("No local data...")
 
 
@@ -102,13 +102,14 @@ def get_data(file_name):
     del df["t"]
     df = df.sort_values(by="d")
 
-    if upload_blob:
-        today = date.today()
-        blob = {"data": df.to_json(orient="records"),
-                "updated": [today.year, today.month-1, today.day]}
+    today = date.today()
+    blob = {"data": df.to_json(orient="records"),
+            "updated": [today.year, today.month-1, today.day]}
 
-        with open(file_name, 'w') as fp:
-            json.dump(blob, fp)
+    with open(file_name, 'w') as fp:
+        json.dump(blob, fp)
+
+    if upload_blob:
         upload_crude_run_blob(file_name)
 
 

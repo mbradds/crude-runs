@@ -12,4 +12,5 @@ dependencies:
   - spyder
   - jinja2
   - bs4
+  - azure-storage-blob
 prefix: /home/grant/anaconda3/envs/pipeline-profiles
