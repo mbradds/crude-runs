@@ -13,11 +13,9 @@ generalTheme(Highcharts);
 function addUpdated(runsData, lang) {
   const lastUpdated = runsData.updated;
   const now = new Date(lastUpdated[0], lastUpdated[1], lastUpdated[2]);
-  const next = new Date(now.setMonth(now.getMonth() + 1));
-
   document.getElementById("updated").innerHTML = lang.updated(
     Highcharts.dateFormat("%b %d, %Y", now),
-    Highcharts.dateFormat("%b %Y", next)
+    Highcharts.dateFormat("%b %Y", new Date(now.setMonth(now.getMonth() + 1)))
   );
 }
 

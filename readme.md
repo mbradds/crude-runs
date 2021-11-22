@@ -1,11 +1,19 @@
 # crude-runs
 
 - Production dashboard: https://www.cer-rec.gc.ca/en/data-analysis/energy-commodities/crude-oil-petroleum-products/statistics/weekly-crude-run-summary-data.html
-- Heroku WebApp: https://crude-runs.herokuapp.com/
+- Azure Static WebApp: https://nice-coast-04d108410.azurestaticapps.net/
 
 Updated on the CER website monthly.
 
 ## Instructions for monthly data update
+
+As of November 2021, the data has been removed from the webpack pattern and moved to Azure blob storage, with fallback to a webpack dynamic import of an older data bundle.
+
+Blob endpoint: https://cer.blob.core.windows.net/crude-run-data/runs.json
+
+`src/data_management/prepare_data.py` can be run monthly and will update the blob + local data file (`src/data_management/runs.json`) if there is new data on the CER website.
+
+## Instructions for css/js/html update
 
 1. Download and save the latest release dist.zip from GitHub: https://github.com/mbradds/crude-runs/releases
 
