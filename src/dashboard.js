@@ -413,7 +413,7 @@ export function buildDashboard(runsData, lang, languageTheme) {
   });
 }
 
-async function fetchErrorBackup(lang, languageTheme) {
+async function fetchErrorBackup(lang) {
   removeSpinningLoader("chart-loader");
   // add out of date warning
   document.getElementById(
@@ -425,9 +425,8 @@ async function fetchErrorBackup(lang, languageTheme) {
     const { default: runsData } = await import(
       /* webpackChunkName: "backupData" */ "./data_management/runs.json"
     );
-    return buildDashboard(runsData, lang, languageTheme);
+    return runsData;
   } catch (err) {
-    console.warn(err);
     return displayErrorMsg(lang);
   }
 }
@@ -438,14 +437,14 @@ export function mainCrudeRuns(lang, languageTheme = false) {
       if (response.ok) {
         return response.json();
       }
-      return fetchErrorBackup(lang, languageTheme);
+      return fetchErrorBackup(lang);
     })
     .then((data) => {
       removeSpinningLoader("chart-loader");
-      buildDashboard(data, lang, languageTheme);
+      return buildDashboard(data, lang, languageTheme);
     })
     .catch((error) => {
       console.warn(error);
-      fetchErrorBackup(lang, languageTheme);
+      return displayErrorMsg(lang);
     });
 }

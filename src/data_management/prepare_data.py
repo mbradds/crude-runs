@@ -3,8 +3,8 @@ import ssl
 from datetime import date
 import json
 import pandas as pd
-from azure.storage.blob import BlobServiceClient, BlobClient, ContainerClient
-from azure.core.exceptions import ResourceExistsError
+from azure.storage.blob import BlobServiceClient
+from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 ssl._create_default_https_context = ssl._create_unverified_context
 
 
@@ -13,7 +13,7 @@ def set_cwd_to_script():
     os.chdir(dname)
 
 
-def upload_crude_run_blob(file_name, container_name="crude-run-data"):
+def get_runs_container_client(container_name):
     key = json.load(open("AZURE_STORAGE_CONNECTION_STRING.json"))
     connect_str = key["AZURE_STORAGE_CONNECTION_STRING"]
     blob_service_client = BlobServiceClient.from_connection_string(connect_str)
@@ -21,12 +21,33 @@ def upload_crude_run_blob(file_name, container_name="crude-run-data"):
         container_client = blob_service_client.create_container(container_name)
     except ResourceExistsError:
         container_client = blob_service_client.get_container_client(container_name)
+    return container_client
 
-    print("starting blob upload...")
-    with open("./"+file_name, "rb") as data:
-        blob_client = container_client.upload_blob(name=file_name, data=data, overwrite=True)
-    print("completed blob upload")
-    return connect_str
+
+def delete_runs_blob(container_name="crude-run-data"):
+    container_client = get_runs_container_client(container_name)
+    try:
+        blob_client = container_client.get_blob_client("runs.json")
+        blob_client.delete_blob()
+        print("deleted blob")
+    except:
+        print("cant delete blob!")
+        raise
+
+def upload_crude_run_blob(file_name, upload_blob, container_name="crude-run-data"):
+    container_client = get_runs_container_client(container_name)
+    blob_client = container_client.get_blob_client("runs.json")
+    try:
+        properties = blob_client.get_blob_properties()
+        blob_exists = True
+    except ResourceNotFoundError:
+        blob_exists = False
+
+    if upload_blob or not blob_exists:
+        print("starting blob upload...")
+        with open("./"+file_name, "rb") as data:
+            blob_client = container_client.upload_blob(name=file_name, data=data, overwrite=True)
+        print("completed blob upload")
 
 
 def get_data(file_name):
@@ -109,8 +130,7 @@ def get_data(file_name):
     with open(file_name, 'w') as fp:
         json.dump(blob, fp)
 
-    if upload_blob:
-        upload_crude_run_blob(file_name)
+    upload_crude_run_blob(file_name, upload_blob)
 
 
 if __name__ == "__main__":
@@ -118,5 +138,6 @@ if __name__ == "__main__":
     set_cwd_to_script()
     print('starting crude runs data update...')
     # key = upload_crude_run_blob()
+    # delete_runs_blob()
     df_ = get_data(file_name)
     print('completed data update!')
