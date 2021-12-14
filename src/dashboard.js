@@ -418,9 +418,7 @@ async function fetchErrorBackup(lang) {
   // add out of date warning
   document.getElementById(
     "out-of-date-warning"
-  ).innerHTML = `<div class="alert alert-warning">
-  <p>${lang.outOfDate}</p>
-</div>`;
+  ).innerHTML = `<div class="alert alert-warning"><p>${lang.outOfDate}</p></div>`;
   try {
     const { default: runsData } = await import(
       /* webpackChunkName: "backupData" */ "./data_management/runs.json"

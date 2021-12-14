@@ -13,9 +13,9 @@ def set_cwd_to_script():
     os.chdir(dname)
 
 
-def get_runs_container_client(container_name):
+def get_runs_container_client(account, container_name):
     key = json.load(open("AZURE_STORAGE_CONNECTION_STRING.json"))
-    connect_str = key["AZURE_STORAGE_CONNECTION_STRING"]
+    connect_str = key[account]
     blob_service_client = BlobServiceClient.from_connection_string(connect_str)
     try:
         container_client = blob_service_client.create_container(container_name)
@@ -24,18 +24,18 @@ def get_runs_container_client(container_name):
     return container_client
 
 
-def delete_runs_blob(container_name="crude-run-data"):
-    container_client = get_runs_container_client(container_name)
+def delete_runs_blob(account, container_name="crude-run-data"):
+    container_client = get_runs_container_client(account, container_name)
     try:
         blob_client = container_client.get_blob_client("runs.json")
         blob_client.delete_blob()
-        print("deleted blob")
+        print("deleted "+account+" blob")
     except:
-        print("cant delete blob!")
+        print("cant delete "+account+" blob!")
         raise
 
-def upload_crude_run_blob(file_name, upload_blob, container_name="crude-run-data"):
-    container_client = get_runs_container_client(container_name)
+def upload_crude_run_blob(account, file_name, upload_blob, container_name="crude-run-data"):
+    container_client = get_runs_container_client(account, container_name)
     blob_client = container_client.get_blob_client("runs.json")
     try:
         properties = blob_client.get_blob_properties()
@@ -44,13 +44,13 @@ def upload_crude_run_blob(file_name, upload_blob, container_name="crude-run-data
         blob_exists = False
 
     if upload_blob or not blob_exists:
-        print("starting blob upload...")
+        print("starting blob upload to "+account+"...")
         with open("./"+file_name, "rb") as data:
             blob_client = container_client.upload_blob(name=file_name, data=data, overwrite=True)
-        print("completed blob upload")
+        print("completed blob upload to "+account)
 
 
-def get_data(file_name):
+def get_data(account, file_name):
     # get the existing local data for last date comparison
     if os.path.isfile("./"+file_name):
         current = json.load(open(file_name))
@@ -130,14 +130,14 @@ def get_data(file_name):
     with open(file_name, 'w') as fp:
         json.dump(blob, fp)
 
-    upload_crude_run_blob(file_name, upload_blob)
+    upload_crude_run_blob(account, file_name, upload_blob)
 
 
 if __name__ == "__main__":
     file_name = "runs.json"
     set_cwd_to_script()
     print('starting crude runs data update...')
-    # key = upload_crude_run_blob()
-    # delete_runs_blob()
-    df_ = get_data(file_name)
+    # delete_runs_blob("test")
+    # delete_runs_blob("production")
+    df_ = get_data("production", file_name)
     print('completed data update!')
