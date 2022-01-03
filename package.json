@@ -1,6 +1,6 @@
 {
   "name": "crude-runs-dashboard",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "sideEffects": false,
   "type": "module",
   "engines": {
@@ -14,31 +14,31 @@
     "start": "node server.js",
     "heroku-postbuild": "webpack --config webpack.prod.js",
     "dev": "webpack serve --config webpack.dev.js",
-    "update-data": "conda run -n pipeline-profiles python src/data_management/prepare_data.py"
+    "update-data": "conda run -n crude-runs python src/data_management/prepare_data.py"
   },
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "@babel/runtime": "^7.16.5",
+    "@babel/runtime": "^7.16.7",
     "@highcharts/map-collection": "^1.1.4",
     "compression": "^1.7.4",
-    "core-js": "^3.19.3",
-    "express": "^4.17.1",
+    "core-js": "^3.20.2",
+    "express": "^4.17.2",
     "highcharts": "^9.3.2",
     "whatwg-fetch": "^3.6.2"
   },
   "devDependencies": {
-    "@babel/core": "^7.16.5",
-    "@babel/plugin-transform-runtime": "^7.16.5",
-    "@babel/preset-env": "^7.16.5",
+    "@babel/core": "^7.16.7",
+    "@babel/plugin-transform-runtime": "^7.16.7",
+    "@babel/preset-env": "^7.16.7",
     "babel-loader": "^8.2.3",
     "clean-webpack-plugin": "^4.0.0",
-    "copy-webpack-plugin": "^10.1.0",
+    "copy-webpack-plugin": "^10.2.0",
     "css-loader": "^6.5.1",
-    "eslint": "^8.4.1",
+    "eslint": "^8.6.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-prettier": "^8.3.0",
-    "eslint-plugin-import": "^2.25.3",
+    "eslint-plugin-import": "^2.25.4",
     "handlebars": "^4.7.7",
     "handlebars-loader": "^1.7.1",
     "html-webpack-plugin": "^5.5.0",
@@ -46,7 +46,7 @@
     "webpack": "^5.65.0",
     "webpack-bundle-analyzer": "^4.5.0",
     "webpack-cli": "^4.9.1",
-    "webpack-dev-server": "^4.6.0",
+    "webpack-dev-server": "^4.7.2",
     "webpack-merge": "^5.8.0"
   }
 }

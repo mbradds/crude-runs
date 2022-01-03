@@ -9,7 +9,7 @@ Updated on the CER website monthly.
 
 As of November 2021, the data has been removed from the webpack pattern and moved to Azure blob storage, with fallback to a webpack dynamic import of an older data bundle.
 
-Blob endpoint: https://cer.blob.core.windows.net/crude-run-data/runs.json
+Blob endpoint: https://cer-production.azureedge.net/crude-run-data/runs.json
 
 `src/data_management/prepare_data.py` can be run monthly and will update the blob + local data file (`src/data_management/runs.json`) if there is new data on the CER website.
 

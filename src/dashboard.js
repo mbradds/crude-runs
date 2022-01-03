@@ -430,7 +430,7 @@ async function fetchErrorBackup(lang) {
 }
 
 export function mainCrudeRuns(lang, languageTheme = false) {
-  fetch("https://cer.blob.core.windows.net/crude-run-data/runs.json")
+  fetch("https://cer-production.azureedge.net/crude-run-data/runs.json")
     .then((response) => {
       if (response.ok) {
         return response.json();
