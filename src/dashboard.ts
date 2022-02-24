@@ -3,42 +3,64 @@ import MapModule from "highcharts/modules/map.js";
 import map from "@highcharts/map-collection/countries/ca/ca-all.geo.json";
 import "core-js/modules/es.promise.js";
 import "whatwg-fetch";
-import { cerPalette } from "./util.js";
-import { generalTheme } from "./themes.js";
+import { cerPalette } from "./util";
+import { generalTheme } from "./themes";
+import { Language } from "./interfaces";
 import "./css/main.css";
 
 MapModule(Highcharts);
 generalTheme(Highcharts);
 
-function addUpdated(runsData, lang) {
+interface RunsData {
+  data: string;
+  updated: number[];
+}
+
+interface RunsDataParsed {
+  d: number;
+  r: string;
+  v: number;
+  c: number;
+}
+
+interface UnitsHolder {
+  current: string;
+  base: string;
+  label: string;
+}
+
+interface SeriesAdder {
+  div: string;
+  data: {
+    name: string;
+    id?: string;
+    data: number[][];
+    color: string;
+    type: string;
+  }[];
+}
+
+interface ThreeRegionSeries {
+  west: SeriesAdder;
+  ontario: SeriesAdder;
+  quebec: SeriesAdder;
+  maxValue: number;
+}
+
+function addUpdated(runsData: RunsData, lang: Language) {
   const lastUpdated = runsData.updated;
   const now = new Date(lastUpdated[0], lastUpdated[1], lastUpdated[2]);
+  const next = new Date(now.setMonth(now.getMonth() + 1));
   document.getElementById("updated").innerHTML = lang.updated(
-    Highcharts.dateFormat("%b %d, %Y", now),
-    Highcharts.dateFormat("%b %Y", new Date(now.setMonth(now.getMonth() + 1)))
+    Highcharts.dateFormat("%b %d, %Y", now.getTime()),
+    Highcharts.dateFormat("%b %Y", next.getTime())
   );
 }
 
-function syncExtremes(e) {
-  const thisChart = this.chart;
-  if (e.trigger !== "syncExtremes") {
-    // Prevent feedback loop
-    Highcharts.charts.forEach((chart) => {
-      if (chart !== thisChart && chart.options.chart.type !== "map") {
-        if (chart.xAxis[0].setExtremes) {
-          // It is null while updating
-          chart.xAxis[0].setExtremes(e.min, e.max, undefined, false, {
-            trigger: "syncExtremes",
-          });
-        }
-      }
-    });
-  }
-}
-
-async function createMap(lang, div = "canada-map") {
-  const canada = await new Highcharts.mapChart(div, {
+async function createMap(lang: Language, div = "canada-map") {
+  return Highcharts.mapChart({
     chart: {
+      renderTo: div,
       type: "map",
       height: 350,
       margin: [0, 0, 20, 0],
@@ -90,9 +112,11 @@ async function createMap(lang, div = "canada-map") {
         borderColor: "#606060",
         nullColor: "rgba(200, 200, 200, 0.2)",
         showInLegend: false,
+        type: "map",
       },
       {
         name: lang.seriesNames.west,
+        type: "map",
         data: [
           ["ca-ab", 5],
           ["ca-bc", 2],
@@ -102,11 +126,13 @@ async function createMap(lang, div = "canada-map") {
       },
       {
         name: lang.seriesNames.ontario,
+        type: "map",
         data: [["ca-on", 4]],
         color: cerPalette.Ocean,
       },
       {
         name: lang.seriesNames.quebec,
+        type: "map",
         data: [
           ["ca-qc", 2],
           ["ca-nb", 1],
@@ -116,6 +142,7 @@ async function createMap(lang, div = "canada-map") {
       },
       {
         name: "no-refinery",
+        type: "map",
         borderColor: "#606060",
         nullColor: "rgba(200, 200, 200, 0.2)",
         color: "rgba(200, 200, 200, 0.2)",
@@ -131,13 +158,20 @@ async function createMap(lang, div = "canada-map") {
       },
     ],
   });
-  return canada;
 }
 
-function seriesify(runData, unitsHolder, lang) {
-  const addToSeries = (units) => {
+function seriesify(
+  runData: RunsDataParsed[],
+  unitsHolder: UnitsHolder,
+  lang: Language
+): ThreeRegionSeries {
+  const addToSeries = (units: UnitsHolder): Function => {
     if (units.current === "m3/d") {
-      return function adder(series, row, maxValue) {
+      return function adder(
+        series: SeriesAdder,
+        row: RunsDataParsed,
+        maxValue: number
+      ) {
         const capacity = parseFloat((row.c / 6.2898).toFixed(1));
         const runs = parseFloat((row.v / 6.2898).toFixed(1));
         series.data[0].data.push([row.d, runs]);
@@ -148,7 +182,11 @@ function seriesify(runData, unitsHolder, lang) {
         return [series, maxValue];
       };
     }
-    return function adder(series, row, maxValue) {
+    return function adder(
+      series: SeriesAdder,
+      row: RunsDataParsed,
+      maxValue: number
+    ) {
       series.data[0].data.push([row.d, row.v]);
       series.data[1].data.push([row.d, row.c]);
       if (row.c > maxValue) {
@@ -158,7 +196,7 @@ function seriesify(runData, unitsHolder, lang) {
     };
   };
 
-  let [west, quebec, ontario] = [
+  let [west, quebec, ontario]: SeriesAdder[] = [
     {
       div: "runs-west",
       data: [
@@ -217,7 +255,7 @@ function seriesify(runData, unitsHolder, lang) {
 
   let maxValue = 0;
   const adder = addToSeries(unitsHolder);
-  runData.forEach((row) => {
+  runData.forEach((row: RunsDataParsed) => {
     if (row.r === "w") {
       [west, maxValue] = adder(west, row, maxValue);
     } else if (row.r === "o") {
@@ -230,7 +268,11 @@ function seriesify(runData, unitsHolder, lang) {
   return { west, ontario, quebec, maxValue };
 }
 
-function regionChartTooltip(event, units, langTool) {
+function regionChartTooltip(
+  event: Highcharts.TooltipFormatterContextObject,
+  units: UnitsHolder,
+  langTool: Language["toolTip"]
+) {
   const utilization = ((event.points[0].y / event.points[1].y) * 100).toFixed(
     0
   );
@@ -244,7 +286,12 @@ function regionChartTooltip(event, units, langTool) {
   return table;
 }
 
-function createRegionChart(series, maxY, units, lang) {
+function createRegionChart(
+  series: any,
+  maxY: number,
+  units: UnitsHolder,
+  lang: Language
+) {
   return Highcharts.chart(series.div, {
     chart: {
       zoomType: "x",
@@ -261,7 +308,22 @@ function createRegionChart(series, maxY, units, lang) {
       type: "datetime",
       crosshair: true,
       events: {
-        setExtremes: syncExtremes,
+        setExtremes(e) {
+          const thisChart = this.chart;
+          if (e.trigger !== "syncExtremes") {
+            // Prevent feedback loop
+            Highcharts.charts.forEach((chart) => {
+              if (chart !== thisChart && chart.options.chart.type !== "map") {
+                if (chart.xAxis[0].setExtremes) {
+                  // It is null while updating
+                  chart.xAxis[0].setExtremes(e.min, e.max, undefined, false, {
+                    trigger: "syncExtremes",
+                  });
+                }
+              }
+            });
+          }
+        },
       },
     },
     plotOptions: {
@@ -299,7 +361,11 @@ function createRegionChart(series, maxY, units, lang) {
   });
 }
 
-function buildAllRunCharts(series, units, lang) {
+function buildAllRunCharts(
+  series: ThreeRegionSeries,
+  units: UnitsHolder,
+  lang: Language
+) {
   const westChart = createRegionChart(
     series.west,
     series.maxValue,
@@ -321,7 +387,12 @@ function buildAllRunCharts(series, units, lang) {
   return [westChart, ontarioChart, quebecChart];
 }
 
-function updateRegionChart(chart, series, region, units) {
+function updateRegionChart(
+  chart: Highcharts.Chart,
+  series: any,
+  region: string,
+  units: UnitsHolder
+) {
   chart.update({
     series: series[region].data,
     yAxis: {
@@ -333,7 +404,7 @@ function updateRegionChart(chart, series, region, units) {
   });
 }
 
-function unitsLabel(units, lang) {
+function unitsLabel(units: UnitsHolder, lang: Language) {
   if (units.current === "m3/d") {
     return lang.units.metric;
   }
@@ -342,10 +413,10 @@ function unitsLabel(units, lang) {
 
 /**
  * Overrides the wet4 equal height if it doesnt work.
- * @param {string} divId1 - HTML id of div to compare to second parameter
- * @param {string} divId2 - HMTL id of div to compare to first parameter
+ * @param divId1 - HTML id of div to compare to second parameter
+ * @param divId2 - HMTL id of div to compare to first parameter
  */
-export function equalizeHeight(divId1, divId2) {
+export function equalizeHeight(divId1: string, divId2: string) {
   const d1 = document.getElementById(divId1);
   const d2 = document.getElementById(divId2);
 
@@ -362,23 +433,27 @@ export function equalizeHeight(divId1, divId2) {
   }
 }
 
-function displayErrorMsg(lang) {
+function displayErrorMsg(lang: Language) {
   document.getElementById(
     "complete-dashboard"
   ).innerHTML = `<section class="alert alert-danger">
   <h3>${lang.error.header}</h3>${lang.error.message}</section>`;
 }
 
-function removeSpinningLoader(divId) {
+function removeSpinningLoader(divId: string) {
   document.getElementById(divId).style.display = "none";
 }
 
-export function buildDashboard(runsData, lang, languageTheme) {
+function buildDashboard(
+  runsData: RunsData,
+  lang: Language,
+  languageTheme: any
+) {
   if (languageTheme) {
     languageTheme(Highcharts);
   }
   addUpdated(runsData, lang);
-  const unitsHolder = { current: "b/d", base: "b/d" };
+  const unitsHolder = { current: "b/d", base: "b/d", label: "" };
   unitsHolder.label = unitsLabel(unitsHolder, lang);
 
   createMap(lang)
@@ -402,8 +477,8 @@ export function buildDashboard(runsData, lang, languageTheme) {
 
   // user selects units
   document.getElementById("radio-units").addEventListener("click", (event) => {
-    if (event.target && event.target.value) {
-      unitsHolder.current = event.target.value;
+    if (event.target && (<HTMLInputElement>event.target).value) {
+      unitsHolder.current = (<HTMLInputElement>event.target).value;
       unitsHolder.label = unitsLabel(unitsHolder, lang);
       series = seriesify(chartData, unitsHolder, lang);
       updateRegionChart(westChart, series, "west", unitsHolder);
@@ -413,7 +488,7 @@ export function buildDashboard(runsData, lang, languageTheme) {
   });
 }
 
-async function fetchErrorBackup(lang) {
+async function fetchErrorBackup(lang: Language) {
   removeSpinningLoader("chart-loader");
   // add out of date warning
   document.getElementById(
@@ -429,7 +504,10 @@ async function fetchErrorBackup(lang) {
   }
 }
 
-export function mainCrudeRuns(lang, languageTheme = false) {
+export function dashboard(
+  lang: Language,
+  languageTheme: boolean | any = false
+) {
   fetch("https://cer-production.azureedge.net/crude-run-data/runs.json")
     .then((response) => {
       if (response.ok) {

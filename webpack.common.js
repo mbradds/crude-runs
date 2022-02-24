@@ -4,12 +4,16 @@ import { CleanWebpackPlugin } from "clean-webpack-plugin";
 import CopyWebpackPlugin from "copy-webpack-plugin";
 import MiniCssExtractPlugin from "mini-css-extract-plugin";
 import HtmlWebpackPlugin from "html-webpack-plugin";
-import { htmlText } from "./src/htmlText.js";
+import { createRequire } from "module";
+// import { BundleAnalyzerPlugin } from "webpack-bundle-analyzer";
+
+const require = createRequire(import.meta.url);
+
+const htmlText = require("./src/htmlText.json");
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-// const BundleAnalyzerPlugin = require("webpack-bundle-analyzer")
-//   .BundleAnalyzerPlugin;
+
 // const webpack = require("webpack");
 
 const pages = function switchLanguage() {
@@ -50,7 +54,7 @@ const pages = function switchLanguage() {
 };
 
 export default {
-  entry: { en: "./src/index_en.js", fr: "./src/index_fr.js" },
+  entry: { en: "./src/index_en.ts", fr: "./src/index_fr.ts" },
   output: {
     path: path.resolve(__dirname, "dist"),
     filename: "[name].[contenthash].js",
@@ -79,11 +83,16 @@ export default {
   ],
 
   resolve: {
-    extensions: ["*", ".js"],
+    extensions: [".tsx", ".ts", ".js"],
   },
 
   module: {
     rules: [
+      {
+        test: /\.ts?$/,
+        use: "babel-loader",
+        exclude: /node_modules/,
+      },
       {
         test: /\.(js)$/,
         exclude: /node_modules/,
