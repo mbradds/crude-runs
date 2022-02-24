@@ -1,6 +1,6 @@
-import { cerPalette } from "./util.js";
+import { cerPalette } from "./util";
 
-export const generalTheme = (Highcharts) => {
+export const generalTheme = (Highcharts: any) => {
   Highcharts.profiles = {
     chart: {
       animation: true,
@@ -82,7 +82,7 @@ export const generalTheme = (Highcharts) => {
   Highcharts.setOptions(Highcharts.profiles);
 };
 
-export const frenchTheme = (Highcharts) => {
+export const frenchTheme = (Highcharts: any) => {
   Highcharts.french = {
     lang: {
       months: [
