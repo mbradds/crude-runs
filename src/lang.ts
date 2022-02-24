@@ -15,7 +15,7 @@ export const lang = {
     refinery: "refinery",
     refineries: "refineries",
     numberFormat: { seperator: " ", decimal: "." },
-    updated: (now, next) =>
+    updated: (now: string, next: string) =>
       `Chart data updated on <strong>${now}</strong>. Next update: second week of <strong>${next}</strong>.`,
     error: { header: "Chart Error", message: "Please try again later." },
     outOfDate:
@@ -37,7 +37,7 @@ export const lang = {
     refinery: "raffinerie",
     refineries: "raffineries",
     numberFormat: { seperator: " ", decimal: "," },
-    updated: (now, next) =>
+    updated: (now: string, next: string) =>
       `Données des graphiques mises à jour le <strong>${now}</strong>. Prochaine mise à jour : seconde semaine de <strong>${next}</strong>.`,
     error: {
       header: "Erreur de graphique",

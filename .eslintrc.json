@@ -1,7 +1,18 @@
 {
-  "extends": ["airbnb-base", "prettier"],
+  "extends": [
+    "airbnb-base",
+    "prettier",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended"
+  ],
+  "parser": "@typescript-eslint/parser",
+  "plugins": ["@typescript-eslint"],
   "env": {
     "browser": true
+  },
+  "globals": {
+    "Highcharts": true,
+    "L": true
   },
   "parserOptions": {
     "ecmaVersion": 2020,
@@ -13,13 +24,30 @@
     "no-nested-ternary": "off",
     "no-underscore-dangle": "warn",
     "new-cap": "warn",
-    "prefer-destructuring": ["warn", { "object": true, "array": true }],
     "no-param-reassign": ["error", { "props": false }],
+    "radix": ["error", "as-needed"],
+    "import/no-unresolved": "off",
     "import/extensions": [
       "error",
       {
         "js": "always",
         "json": "always"
+      }
+    ],
+    "@typescript-eslint/ban-types": [
+      "error",
+      {
+        "types": {
+          "Function": false
+        }
+      }
+    ],
+    "import/no-extraneous-dependencies": [
+      "error",
+      {
+        "devDependencies": true,
+        "optionalDependencies": false,
+        "peerDependencies": false
       }
     ]
   }

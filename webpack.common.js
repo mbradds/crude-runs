@@ -5,6 +5,7 @@ import CopyWebpackPlugin from "copy-webpack-plugin";
 import MiniCssExtractPlugin from "mini-css-extract-plugin";
 import HtmlWebpackPlugin from "html-webpack-plugin";
 import { createRequire } from "module";
+// import { BundleAnalyzerPlugin } from "webpack-bundle-analyzer";
 
 const require = createRequire(import.meta.url);
 
@@ -12,8 +13,7 @@ const htmlText = require("./src/htmlText.json");
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-// const BundleAnalyzerPlugin = require("webpack-bundle-analyzer")
-//   .BundleAnalyzerPlugin;
+
 // const webpack = require("webpack");
 
 const pages = function switchLanguage() {

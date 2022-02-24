@@ -1,4 +1,4 @@
-import { mainCrudeRuns } from "./dashboard";
+import { dashboard } from "./dashboard";
 import { lang } from "./lang";
 
-mainCrudeRuns(lang.en);
+dashboard(lang.en);
