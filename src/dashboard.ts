@@ -51,10 +51,13 @@ function addUpdated(runsData: RunsData, lang: Language) {
   const lastUpdated = runsData.updated;
   const now = new Date(lastUpdated[0], lastUpdated[1], lastUpdated[2]);
   const next = new Date(now.setMonth(now.getMonth() + 1));
-  document.getElementById("updated").innerHTML = lang.updated(
-    Highcharts.dateFormat("%b %d, %Y", now.getTime()),
-    Highcharts.dateFormat("%b %Y", next.getTime())
-  );
+  const updatedDiv = document.getElementById("updated");
+  if (updatedDiv) {
+    updatedDiv.innerHTML = lang.updated(
+      Highcharts.dateFormat("%b %d, %Y", now.getTime()),
+      Highcharts.dateFormat("%b %Y", next.getTime())
+    );
+  }
 }
 
 async function createMap(lang: Language, div = "canada-map") {
@@ -96,7 +99,7 @@ async function createMap(lang: Language, div = "canada-map") {
     tooltip: {
       useHTML: true,
       formatter: function mapTooltip() {
-        if (this.point.value > 0) {
+        if (this.point.value && this.point.value > 0) {
           const header = `<strong>${this.series.name}</strong><br>`;
           const postWord =
             this.point.value > 1 ? lang.refineries : lang.refinery;
@@ -273,16 +276,22 @@ function regionChartTooltip(
   units: UnitsHolder,
   langTool: Language["toolTip"]
 ) {
-  const utilization = ((event.points[0].y / event.points[1].y) * 100).toFixed(
-    0
-  );
   let table = `<table><caption style="padding:0px; padding-bottom:5px">${Highcharts.dateFormat(
     "%b %d, %Y",
     event.x
   )}</caption>`;
-  table += `<tr><td>${langTool.runs}&nbsp</td><td><strong>${event.points[0].y}&nbsp${units.label}</strong></td>`;
-  table += `<tr><td>${langTool.cap}&nbsp</td><td><strong>${event.points[1].y}&nbsp${units.label}<strong></td>`;
-  table += `<tr style="border-top: 1px solid grey"><td>${langTool.util}&nbsp</td><td><strong>${utilization}&nbsp%<strong></td></table>`;
+
+  if (event.points) {
+    table += `<tr><td>${langTool.runs}&nbsp</td><td><strong>${event.points[0].y}&nbsp${units.label}</strong></td>`;
+    table += `<tr><td>${langTool.cap}&nbsp</td><td><strong>${event.points[1].y}&nbsp${units.label}<strong></td>`;
+    table += `<tr style="border-top: 1px solid grey"><td>${
+      langTool.util
+    }&nbsp</td><td><strong>${(
+      (event.points[0].y / event.points[1].y) *
+      100
+    ).toFixed(0)}&nbsp%<strong></td>`;
+  }
+  table += "</table>";
   return table;
 }
 
@@ -313,13 +322,16 @@ function createRegionChart(
           if (e.trigger !== "syncExtremes") {
             // Prevent feedback loop
             Highcharts.charts.forEach((chart) => {
-              if (chart !== thisChart && chart.options.chart.type !== "map") {
-                if (chart.xAxis[0].setExtremes) {
-                  // It is null while updating
-                  chart.xAxis[0].setExtremes(e.min, e.max, undefined, false, {
-                    trigger: "syncExtremes",
-                  });
-                }
+              if (
+                chart !== thisChart &&
+                chart &&
+                chart.options &&
+                chart.options.chart &&
+                chart.options.chart.type !== "map"
+              ) {
+                chart.xAxis[0].setExtremes(e.min, e.max, undefined, false, {
+                  trigger: "syncExtremes",
+                });
               }
             });
           }
@@ -420,28 +432,33 @@ export function equalizeHeight(divId1: string, divId2: string) {
   const d1 = document.getElementById(divId1);
   const d2 = document.getElementById(divId2);
 
-  d1.style.height = "auto";
-  d2.style.height = "auto";
+  if (d1 && d2) {
+    d1.style.height = "auto";
+    d2.style.height = "auto";
+    const d1Height = d1.clientHeight;
+    const d2Height = d2.clientHeight;
 
-  const d1Height = d1.clientHeight;
-  const d2Height = d2.clientHeight;
-
-  const maxHeight = Math.max(d1Height, d2Height);
-  if (d1Height !== maxHeight || d2Height !== maxHeight) {
-    d1.style.height = `${maxHeight}px`;
-    d2.style.height = `${maxHeight}px`;
+    const maxHeight = Math.max(d1Height, d2Height);
+    if (d1Height !== maxHeight || d2Height !== maxHeight) {
+      d1.style.height = `${maxHeight}px`;
+      d2.style.height = `${maxHeight}px`;
+    }
   }
 }
 
 function displayErrorMsg(lang: Language) {
-  document.getElementById(
-    "complete-dashboard"
-  ).innerHTML = `<section class="alert alert-danger">
-  <h3>${lang.error.header}</h3>${lang.error.message}</section>`;
+  const errorDiv = document.getElementById("complete-dashboard");
+  if (errorDiv) {
+    errorDiv.innerHTML = `<section class="alert alert-danger">
+    <h3>${lang.error.header}</h3>${lang.error.message}</section>`;
+  }
 }
 
 function removeSpinningLoader(divId: string) {
-  document.getElementById(divId).style.display = "none";
+  const spinnerDiv = document.getElementById(divId);
+  if (spinnerDiv) {
+    spinnerDiv.style.display = "none";
+  }
 }
 
 function buildDashboard(
@@ -476,24 +493,29 @@ function buildDashboard(
   );
 
   // user selects units
-  document.getElementById("radio-units").addEventListener("click", (event) => {
-    if (event.target && (<HTMLInputElement>event.target).value) {
-      unitsHolder.current = (<HTMLInputElement>event.target).value;
-      unitsHolder.label = unitsLabel(unitsHolder, lang);
-      series = seriesify(chartData, unitsHolder, lang);
-      updateRegionChart(westChart, series, "west", unitsHolder);
-      updateRegionChart(ontarioChart, series, "ontario", unitsHolder);
-      updateRegionChart(quebecChart, series, "quebec", unitsHolder);
-    }
-  });
+  const unitsSelectDiv = document.getElementById("radio-units");
+  if (unitsSelectDiv) {
+    unitsSelectDiv.addEventListener("click", (event) => {
+      if (event.target && (<HTMLInputElement>event.target).value) {
+        unitsHolder.current = (<HTMLInputElement>event.target).value;
+        unitsHolder.label = unitsLabel(unitsHolder, lang);
+        series = seriesify(chartData, unitsHolder, lang);
+        updateRegionChart(westChart, series, "west", unitsHolder);
+        updateRegionChart(ontarioChart, series, "ontario", unitsHolder);
+        updateRegionChart(quebecChart, series, "quebec", unitsHolder);
+      }
+    });
+  }
 }
 
 async function fetchErrorBackup(lang: Language) {
   removeSpinningLoader("chart-loader");
   // add out of date warning
-  document.getElementById(
-    "out-of-date-warning"
-  ).innerHTML = `<div class="alert alert-warning"><p>${lang.outOfDate}</p></div>`;
+  const outOfDateDiv = document.getElementById("out-of-date-warning");
+  if (outOfDateDiv) {
+    outOfDateDiv.innerHTML = `<div class="alert alert-warning"><p>${lang.outOfDate}</p></div>`;
+  }
+
   try {
     const { default: runsData } = await import(
       /* webpackChunkName: "backupData" */ "./data_management/runs.json"

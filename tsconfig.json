@@ -10,13 +10,12 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "strict": true,
-    "strictNullChecks": false
+    "strictNullChecks": true
   },
   "ts-node": {
     "compilerOptions": {
       "module": "ESNext"
     }
   },
-  "include": ["./src"],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "./dist", "webpack*"]
 }

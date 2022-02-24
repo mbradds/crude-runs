@@ -44,7 +44,7 @@ export const generalTheme = (Highcharts: any) => {
         },
       },
       labels: {
-        formatter() {
+        formatter(): string {
           return Highcharts.numberFormat(this.value, 0, ".", ",");
         },
         style: {

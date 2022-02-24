@@ -1,4 +1,6 @@
-export const lang = {
+import { Language } from "./interfaces";
+
+export const lang: { en: Language; fr: Language } = {
   en: {
     units: { imperial: "thousand b/d", metric: "thousand m3/d" },
     seriesNames: {

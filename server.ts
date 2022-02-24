@@ -9,7 +9,7 @@ const __dirname = path.dirname(__filename);
 const port = process.env.PORT || 8080;
 const app = express();
 
-function shouldCompress(req, res) {
+function shouldCompress(req: any, res: any) {
   if (req.headers["x-no-compression"]) {
     // don't compress responses with this request header
     return false;
